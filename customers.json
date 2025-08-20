@@ -1,0 +1,19 @@
+{
+  "customers": {
+    "Insight Recovery": {
+      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
+      "aliases": ["Insight Therapy", "IRT"],
+      "description": "Behavioral health recovery center"
+    },
+    "Ulster County": {
+      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
+      "aliases": ["Ulster County Services", "Ulster"],
+      "description": "County mental health services"
+    },
+    "Example Customer": {
+      "asana_project_id": "1234567890123456",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    }
+  }
+}
