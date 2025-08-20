@@ -10,6 +10,7 @@ import logging
 from pathlib import Path
 from dotenv import load_dotenv
 from typing import Dict, List, Optional
+from datetime import datetime
 
 # Import custom modules
 from src.pdf_processor import PDFProcessor
@@ -47,6 +48,10 @@ def init_session_state():
         st.session_state.created_tasks = []
     if 'error_messages' not in st.session_state:
         st.session_state.error_messages = []
+    if 'meeting_type' not in st.session_state:
+        st.session_state.meeting_type = 'sales_call'
+    if 'meeting_title' not in st.session_state:
+        st.session_state.meeting_title = 'Meeting'
 
 init_session_state()
 
@@ -99,22 +104,36 @@ def main():
     with st.sidebar:
         st.header("Configuration")
         
-        # Customer selection
-        customer_names = list(customers.keys())
-        selected_customer = st.selectbox(
-            "Select Customer/Project",
-            customer_names,
-            help="Choose the customer/project for task creation"
+        # Meeting type selection
+        meeting_type = st.radio(
+            "Meeting Type",
+            ["Sales Call", "Internal Meeting"],
+            help="Select the type of meeting transcript"
         )
+        st.session_state.meeting_type = meeting_type.lower().replace(" ", "_")
         
-        if selected_customer:
-            customer_info = customers[selected_customer]
-            project_id = customer_info.get('asana_project_id', '')
+        # Customer selection (only for sales calls)
+        if st.session_state.meeting_type == "sales_call":
+            customer_names = list(customers.keys())
+            selected_customer = st.selectbox(
+                "Select Customer/Project",
+                customer_names,
+                help="Choose the customer/project for task creation"
+            )
             
-            if project_id == 'YOUR_ASANA_PROJECT_ID_HERE':
-                st.warning("Please configure the Asana project ID in customers.json")
-            else:
-                st.success(f"Project ID: {project_id[:8]}...")
+            if selected_customer:
+                customer_info = customers[selected_customer]
+                project_id = customer_info.get('asana_project_id', '')
+                
+                if project_id == 'YOUR_ASANA_PROJECT_ID_HERE':
+                    st.warning("Please configure the Asana project ID in customers.json")
+                else:
+                    st.success(f"Project ID: {project_id[:8]}...")
+        else:
+            # Internal meeting - use fixed project
+            selected_customer = "Internal Meeting"
+            project_id = "1211106531309164"  # Fixed internal meetings project
+            st.info("Internal meetings will be added to the Ops Board")
         
         st.divider()
         
@@ -217,7 +236,8 @@ def main():
                         analysis = analyzer.analyze_transcript(
                             st.session_state.extracted_text,
                             selected_customer,
-                            f"Meeting transcript for {selected_customer}"
+                            f"Meeting transcript for {selected_customer}",
+                            meeting_type=st.session_state.meeting_type
                         )
                         
                         # Store action items
@@ -232,6 +252,12 @@ def main():
                         
                         # Display results
                         st.success(f"✅ Found {len(analysis.action_items)} action items")
+                        
+                        # Show meeting title
+                        if hasattr(analysis, 'meeting_title'):
+                            st.subheader("Meeting Title")
+                            st.write(analysis.meeting_title)
+                            st.session_state.meeting_title = analysis.meeting_title
                         
                         # Show summary
                         if analysis.summary:
@@ -273,11 +299,26 @@ def main():
             if project_id and project_id != 'YOUR_ASANA_PROJECT_ID_HERE':
                 with st.spinner("Creating tasks in Asana..."):
                     try:
-                        # Create tasks
+                        # Get current date for section naming
+                        current_date = datetime.now().strftime("%m/%d")
+                        
+                        # Create section name based on meeting type and title
+                        meeting_title = getattr(st.session_state, 'meeting_title', 'Meeting')
+                        section_name = f"{current_date} - {meeting_title}"
+                        
+                        # Create meeting context for task descriptions
+                        if st.session_state.meeting_type == "internal_meeting":
+                            meeting_context = f"{current_date} - Internal: {meeting_title}"
+                        else:
+                            meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"
+                        
+                        # Create tasks with section
                         asana_client = AsanaTaskCreator()
                         created_tasks = asana_client.create_tasks(
                             st.session_state.action_items,
-                            project_id
+                            project_id,
+                            section_name=section_name,
+                            meeting_context=meeting_context
                         )
                         
                         st.session_state.created_tasks = created_tasks
