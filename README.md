@@ -1,14 +1,32 @@
-# Asana Opus - AI-Powered Meeting Transcript to Task Converter
+# Asana Meeting Transcript Analyzer
 
-Transform your meeting transcripts into actionable Asana tasks using AI. Upload a PDF transcript from Grain, Gong, Otter, or similar tools, and let AI analyze it to extract action items and automatically create tasks in your Asana projects.
+An AI-powered application that automatically converts meeting transcripts into actionable Asana tasks using Google Gemini AI.
 
-## Features
+## Overview
 
-- 📄 **PDF Transcript Processing**: Extract text from meeting transcript PDFs
-- 🤖 **AI-Powered Analysis**: Uses Google Gemini to identify action items, participants, and key decisions
-- ✅ **Automatic Task Creation**: Creates tasks directly in your Asana projects
-- 🎯 **Customer/Project Mapping**: Organize tasks by customer or project
-- 🚀 **Simple Web Interface**: User-friendly Streamlit application
+This application streamlines the workflow of converting meeting recordings from tools like Gong, Grain, or Otter.ai into organized, actionable tasks in Asana. It uses Google's Gemini AI to intelligently analyze transcripts, extract action items, and automatically create tasks in the appropriate Asana projects.
+
+## Current Features
+
+### Core Functionality
+- **PDF Upload & Processing**: Upload meeting transcripts in PDF format
+- **Multi-Method Text Extraction**: Robust PDF text extraction using multiple fallback methods (PyMuPDF, pdfplumber, PyPDF2)
+- **AI-Powered Analysis**: Uses Google Gemini AI to analyze transcripts and extract:
+  - Action items with titles and descriptions
+  - Meeting participants
+  - Key decisions made
+  - Meeting summary
+  - Priority levels for tasks
+- **Asana Integration**: Automatically creates tasks in specified Asana projects
+- **Customer Management**: Manual customer selection via dropdown menu
+- **Project Mapping**: Maps customers to their respective Asana project IDs
+
+### Technical Features
+- **Streamlit Web Interface**: Simple, user-friendly web application
+- **Environment Configuration**: Secure API key management via .env files
+- **Error Handling**: Graceful fallbacks and error recovery
+- **Structured Output**: Uses JSON schema for consistent AI responses
+- **Logging**: Comprehensive logging for debugging and monitoring
 
 ## Prerequisites
 
@@ -200,6 +218,21 @@ For issues or questions, please create an issue on GitHub.
 - Powered by [Google Gemini](https://ai.google.dev)
 - Integrated with [Asana](https://asana.com)
 
+## Technology Stack
+
+- **Frontend**: Streamlit
+- **AI/ML**: Google Gemini API (gemini-1.5-flash model)
+- **Task Management**: Asana API
+- **PDF Processing**: PyMuPDF, pdfplumber, PyPDF2
+- **Language**: Python 3.8+
+
+## Recent Updates
+
+### Fixed Issues
+- **Pydantic/Google-genai Compatibility**: Resolved validation errors by converting Pydantic models to manual JSON schema format for structured AI output
+- **PDF Text Extraction**: Implemented multiple fallback methods for robust text extraction
+- **Error Handling**: Added comprehensive error recovery for API failures
+
 ---
 
-Made with ❤️ for Opus Behavioral Health
+**Note**: This application is in active development for Opus Behavioral Health. Features and functionality may change as requirements evolve.

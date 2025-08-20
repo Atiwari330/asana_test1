@@ -70,24 +70,66 @@ class GeminiAnalyzer:
         prompt = self._create_prompt(transcript, customer_name, additional_context)
         
         try:
-            # Generate response with structured output
+            # Generate response with structured output using manual schema
+            # Convert Pydantic model to schema dict for compatibility
+            schema = {
+                "type": "object",
+                "properties": {
+                    "action_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {"type": "string"},
+                                "description": {"type": "string"},
+                                "priority": {"type": "string"},
+                                "mentioned_by": {"type": "string"}
+                            },
+                            "required": ["title", "description"]
+                        }
+                    },
+                    "summary": {"type": "string"},
+                    "participants": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "key_decisions": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                },
+                "required": ["action_items", "summary", "participants", "key_decisions"]
+            }
+            
             response = self.client.models.generate_content(
                 model=self.model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
-                    response_schema=TranscriptAnalysis,
+                    response_schema=schema,
                     temperature=0.1,  # Low temperature for consistent extraction
                     max_output_tokens=4096
                 )
             )
             
             # Parse the response
-            if hasattr(response, 'parsed'):
-                analysis = response.parsed
+            if hasattr(response, 'text') and response.text:
+                result_json = json.loads(response.text)
+                # Convert to Pydantic model
+                analysis = TranscriptAnalysis(
+                    action_items=[ActionItem(**item) for item in result_json.get('action_items', [])],
+                    summary=result_json.get('summary', ''),
+                    participants=result_json.get('participants', []),
+                    key_decisions=result_json.get('key_decisions', [])
+                )
             else:
-                # Fallback to manual parsing if needed
-                analysis = TranscriptAnalysis.model_validate_json(response.text)
+                # Fallback empty analysis
+                analysis = TranscriptAnalysis(
+                    action_items=[],
+                    summary="Unable to extract content",
+                    participants=[],
+                    key_decisions=[]
+                )
             
             logger.info(f"Successfully analyzed transcript. Found {len(analysis.action_items)} action items.")
             return analysis

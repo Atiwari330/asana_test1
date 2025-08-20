@@ -1,8 +1,8 @@
 {
   "customers": {
-    "Insight Recovery": {
-      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
-      "aliases": ["Insight Therapy", "IRT"],
+    "Family Houston": {
+      "asana_project_id": "1211106489570613",
+      "aliases": ["Family Houston"],
       "description": "Behavioral health recovery center"
     },
     "Ulster County": {
