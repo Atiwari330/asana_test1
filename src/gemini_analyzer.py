@@ -411,7 +411,7 @@ CRITICAL OWNERSHIP RULES FOR ONBOARDING:
 For action items:
 - Extract ALL directives from Humberto (CEO) - these are non-negotiable
 - Extract directives from Adi (VP Operations)
-- Include questions that need answers (mark as questions)
+- Include questions that need answers (but do NOT use is_question flag - that's only for sales calls)
 - Note if someone specific is assigned (rare, but possible)
 - Default assumption: Tasks are for the onboarding team unless specified
 
@@ -518,12 +518,11 @@ TIMESTAMP EXTRACTION:
 - Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
 - Record when key decisions or commitments were made
 
-QUESTIONS TO HIGHLIGHT:
-- Mark items as questions (is_question: true) when:
-  - Technical clarification needed
-  - Business requirements unclear
-  - Timeline or priority uncertain
-- Format: "Integration Question: [specific question]"
+INTEGRATION QUESTIONS:
+- For questions needing clarification, format title as: "Integration Question: [specific question]"
+- These are NOT customer questions - they are technical/business clarifications between partners
+- Include full context in the description
+- DO NOT mark these with is_question flag (that's only for sales calls)
 
 Priority Guidelines:
 - Blockers to integration: HIGH
