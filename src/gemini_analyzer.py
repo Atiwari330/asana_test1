@@ -34,13 +34,13 @@ class TranscriptAnalysis(BaseModel):
 class GeminiAnalyzer:
     """Analyze transcripts using Google Gemini AI"""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "gemini-1.5-flash"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gemini-2.5-pro"):
         """
         Initialize Gemini analyzer
         
         Args:
             api_key: Gemini API key (if None, will use environment variable)
-            model: Model to use ("gemini-1.5-flash" or "gemini-1.5-pro")
+            model: Model to use ("gemini-2.5-pro", "gemini-2.5-flash", "gemini-1.5-flash", etc.)
         """
         self.api_key = api_key or os.getenv('GEMINI_API_KEY')
         if not self.api_key:
@@ -193,8 +193,10 @@ Typical attendees from prospects:
 </transcript>
 
 <instructions>
+CONTEXT: You are analyzing a sales call where Adi Tiwari is the Opus sales executive/presenter.
+
 Analyze this sales call transcript and extract:
-1. Action items - specific follow-up tasks that need to be completed
+1. Action items - ONLY tasks that Adi Tiwari specifically needs to complete
 2. A brief summary of the demo/call
 3. List of participants (names and roles if mentioned)
 4. Key decisions or buying signals
@@ -209,11 +211,24 @@ For action items, focus on:
 - Features or modules to demonstrate further
 - Implementation or timeline discussions
 
+CRITICAL: Only extract action items that ADI TIWARI (the presenter/sales executive) explicitly owns or commits to:
+- Look for phrases like "I'll send", "I'll schedule", "I'll follow up", "Let me get you"
+- Exclude tasks assigned to prospects/customers (like "Steve will send")
+- Exclude general discussion topics that aren't clear assignments
+- If unclear who owns it, default to NOT including it as Adi's action
+
 IMPORTANT: Write action items with enough context so someone who didn't attend the meeting can understand:
 - What specific question was asked
 - What feature/module was discussed
 - What the customer's concern or requirement is
 - Why this follow-up is needed
+
+OWNERSHIP RULES:
+- If someone says "Steve will send..." → That's Steve's task, NOT Adi's
+- If David says "I will collect data..." → That's David's task, NOT Adi's  
+- If Adi says "I'll send..." or "Let me..." → That IS Adi's task
+- General discussions without clear ownership → NOT an action item
+- When in doubt about ownership → EXCLUDE it
 
 Prioritize based on:
 - High: Blocking decisions, urgent timeline, critical requirements

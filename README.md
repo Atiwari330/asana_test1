@@ -221,7 +221,7 @@ For issues or questions, please create an issue on GitHub.
 ## Technology Stack
 
 - **Frontend**: Streamlit
-- **AI/ML**: Google Gemini API (gemini-1.5-flash model)
+- **AI/ML**: Google Gemini API (gemini-2.5-pro model)
 - **Task Management**: Asana API
 - **PDF Processing**: PyMuPDF, pdfplumber, PyPDF2
 - **Language**: Python 3.8+

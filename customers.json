@@ -6,14 +6,69 @@
       "description": "Behavioral health recovery center"
     },
     "Ulster County": {
-      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
+      "asana_project_id": "1211114338222470",
       "aliases": ["Ulster County Services", "Ulster"],
       "description": "County mental health services"
     },
-    "Example Customer": {
-      "asana_project_id": "1234567890123456",
+    "Triumphant Homes": {
+      "asana_project_id": "1211114458655264",
       "aliases": ["Example Corp", "EC"],
       "description": "Example customer for testing"
+    },
+    "I am Recovery": {
+      "asana_project_id": "1211114458655267",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Center for Occupational Health": {
+      "asana_project_id": "1211114458655270",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Wil La Mootk": {
+      "asana_project_id": "1211114458655273",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Serenity Psychotherapy": {
+      "asana_project_id": "1211114458655276",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "NeuPath Mind Wellness": {
+      "asana_project_id": "1211114462739014",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Shiloh Treatment Center": {
+      "asana_project_id": "1211114462739017",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Fathers UpLift": {
+      "asana_project_id": "1211114462739020",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Professional Counseling Center": {
+      "asana_project_id": "1211114462739023",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Life Within": {
+      "asana_project_id": "1211114462739026",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Talkspace": {
+      "asana_project_id": "1211114462739029",
+      "aliases": ["Example Corp", "EC"],
+      "description": "Example customer for testing"
+    },
+    "Sanctuary Clinics": {
+      "asana_project_id": "1211106535372083",
+      "aliases": ["Sanctuary Clinics"],
+      "description": "Behavioral health services"
     }
   }
 }
