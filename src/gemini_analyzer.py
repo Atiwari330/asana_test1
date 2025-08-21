@@ -237,10 +237,28 @@ CUSTOMER QUESTIONS:
 - For questions, format title as: "Customer Question: [brief question]"
 - Include full context in description
 
-MANDATORY TASKS FOR SALES CALLS - ALWAYS INCLUDE THESE TWO:
+MANDATORY TASKS FOR SALES CALLS - ALWAYS INCLUDE THESE THREE:
 (Use "{customer_name}" as the customer name in the titles below)
 
-1. SEND FOLLOW-UP EMAIL (ALWAYS REQUIRED):
+1. SUMMARY OF CALL (ALWAYS REQUIRED - MUST BE FIRST):
+   - Title: "SUMMARY OF CALL"
+   - Priority: low
+   - Description: Provide a comprehensive meeting summary including:
+     * Meeting stage/type (initial discovery, demo, follow-up, pricing discussion, technical deep dive, etc.)
+     * Key topics discussed and main points covered
+     * Customer's level of engagement and sentiment (interested, hesitant, excited, concerned, etc.)
+     * Primary pain points or challenges the customer mentioned
+     * Opus products/features that were demonstrated or discussed
+     * Customer's specific use cases and requirements
+     * Important questions raised by the customer and how they were addressed
+     * Any objections or concerns expressed
+     * Buying signals or positive indicators observed
+     * Next steps and expected timeline
+     * Overall assessment of the call's success and progress in the sales cycle
+   - This is NOT an action item - it's purely informational for reference
+   - Write in a narrative style that gives context to someone who wasn't on the call
+
+2. SEND FOLLOW-UP EMAIL (ALWAYS REQUIRED):
    - Title: "Send follow-up email to {customer_name}"
    - Priority: high
    - Description should include a HIGH-LEVEL SUMMARY (one paragraph):
@@ -251,7 +269,7 @@ MANDATORY TASKS FOR SALES CALLS - ALWAYS INCLUDE THESE TWO:
    - Do NOT include technical implementation details or feature specifics
    - Example: "Demonstrated the EHR platform focusing on scheduling and billing modules. Customer expressed interest in insurance verification features and workflow automation. Main concern was integration with existing systems. Agreed to schedule a follow-up call next week to discuss implementation timeline."
 
-2. UPDATE HUBSPOT (ALWAYS REQUIRED):
+3. UPDATE HUBSPOT (ALWAYS REQUIRED):
    - Title: "Update HubSpot for {customer_name}"
    - Priority: high
    - Description MUST include these specific instructions:
@@ -332,7 +350,26 @@ Analyze this internal meeting transcript and extract:
    - Examples: "Leadership Sync", "Retrospective", "Sprint Planning", "Training Session", "Strategy Review", "Support Review"
    - Focus on the type or purpose of the meeting
 
-For action items:
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. SUMMARY OF CALL:
+   - Title: "SUMMARY OF CALL"
+   - Priority: low
+   - Description: Comprehensive meeting overview including:
+     * Meeting purpose and context
+     * Main topics discussed and key points covered
+     * Department(s) involved and their perspectives
+     * Important decisions made or deferred
+     * Process improvements or changes discussed
+     * Cross-functional dependencies identified
+     * Team dynamics and engagement level
+     * Any blockers or challenges raised
+     * Action items agreed upon and ownership
+     * Next steps and follow-up meetings planned
+     * Overall meeting effectiveness and outcomes
+   - This is NOT an action item requiring work - it's informational documentation
+   - Write as a narrative that provides context for team members who weren't present
+
+For additional action items:
 - Extract clear, actionable tasks
 - Focus on operational and strategic items
 - Include decisions that require follow-up
@@ -400,6 +437,27 @@ Analyze this onboarding meeting transcript and extract:
 3. List of participants
 4. Key decisions made
 5. Meeting title - Create a concise descriptive title (10-30 chars)
+
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. SUMMARY OF CALL:
+   - Title: "SUMMARY OF CALL"
+   - Priority: low
+   - Description: Comprehensive onboarding meeting summary including:
+     * Meeting purpose (new client onboarding, implementation review, training session, etc.)
+     * Client name and their current onboarding stage
+     * Key onboarding topics discussed
+     * Client requirements and customization needs identified
+     * Training topics covered or scheduled
+     * Integration points and technical requirements
+     * Timeline and milestones discussed
+     * Client concerns or questions raised
+     * Humberto's (CEO) directives if present
+     * Adi's (VP Ops) operational guidance if present
+     * Resources needed or blockers identified
+     * Next steps in the onboarding process
+     * Overall client readiness and engagement assessment
+   - This is NOT an action item - it's informational documentation
+   - Focus on providing context for the onboarding team's reference
 
 CRITICAL OWNERSHIP RULES FOR ONBOARDING:
 1. If HUMBERTO (CEO) says something needs to be done → It's an action item (HIGH PRIORITY)
@@ -491,6 +549,27 @@ Analyze this Finpay <> LSQ Integration meeting transcript and extract:
 3. List of participants (identify company affiliation when possible)
 4. Key technical or business decisions made
 5. Meeting title - Create a concise descriptive title (10-30 chars) focused on integration progress
+
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. SUMMARY OF CALL:
+   - Title: "SUMMARY OF CALL"
+   - Priority: low
+   - Description: Comprehensive integration meeting summary including:
+     * Meeting purpose (technical review, API discussion, timeline sync, testing session, etc.)
+     * Current integration status and progress since last meeting
+     * Technical topics discussed (APIs, data mapping, authentication, etc.)
+     * Business requirements clarified or modified
+     * Decisions made by Hector (CTO) or technical leads
+     * Operational considerations raised by Adi (VP Ops) or Linda (Finpay VP)
+     * Blockers or dependencies identified between teams
+     * Testing results or plans discussed
+     * Security or compliance topics addressed
+     * Timeline updates or commitments made
+     * Resource needs from either Opus or Finpay side
+     * Next technical milestones
+     * Overall integration health and risk assessment
+   - This is NOT an action item - it's project documentation for reference
+   - Provide technical and business context for both teams
 
 CRITICAL EXTRACTION RULES:
 1. Technical decisions from Hector (CTO) are HIGH priority
