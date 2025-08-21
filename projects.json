@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "Finpay <> LSQ Integration": {
+      "asana_project_id": "1211116894172769",
+      "aliases": ["Finpay LSQ", "LSQ Integration", "Finpay Integration"],
+      "description": "Finpay and LSQ integration project - Third-party behavioral health estimation services integration with Lead Squared CRM"
+    }
+  }
+}

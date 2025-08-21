@@ -83,6 +83,19 @@ def load_departments() -> Dict:
         st.error("Invalid JSON in departments.json file.")
         return {}
 
+def load_projects() -> Dict:
+    """Load projects configuration from JSON file"""
+    try:
+        with open('projects.json', 'r') as f:
+            data = json.load(f)
+            return data.get('projects', {})
+    except FileNotFoundError:
+        st.error("projects.json file not found. Please create it from the template.")
+        return {}
+    except json.JSONDecodeError:
+        st.error("Invalid JSON in projects.json file.")
+        return {}
+
 def check_api_keys() -> tuple:
     """Check if required API keys are configured"""
     asana_token = os.getenv('ASANA_ACCESS_TOKEN')
@@ -110,9 +123,10 @@ def main():
         st.info("Please copy .env.example to .env and add your API keys.")
         st.stop()
     
-    # Load customers and departments
+    # Load customers, departments, and projects
     customers = load_customers()
     departments = load_departments()
+    projects = load_projects()
     if not customers or not departments:
         st.stop()
     
@@ -123,18 +137,18 @@ def main():
         # Meeting type selection
         meeting_type = st.radio(
             "Meeting Type",
-            ["Sales Call", "Internal Meeting"],
+            ["Sales Call", "Internal Meeting", "Project Meeting"],
             help="Select the type of meeting transcript"
         )
         st.session_state.meeting_type = meeting_type.lower().replace(" ", "_")
         
-        # Customer selection (only for sales calls)
+        # Customer/Department/Project selection based on meeting type
         if st.session_state.meeting_type == "sales_call":
             customer_names = list(customers.keys())
             selected_customer = st.selectbox(
-                "Select Customer/Project",
+                "Select Customer",
                 customer_names,
-                help="Choose the customer/project for task creation"
+                help="Choose the customer for task creation"
             )
             
             if selected_customer:
@@ -144,8 +158,9 @@ def main():
                 if project_id == 'YOUR_ASANA_PROJECT_ID_HERE':
                     st.warning("Please configure the Asana project ID in customers.json")
                 else:
-                    st.success(f"Project ID: {project_id[:8]}...")
-        else:
+                    st.success(f"Customer: {selected_customer} | Project ID: {project_id[:8]}...")
+                    
+        elif st.session_state.meeting_type == "internal_meeting":
             # Internal meeting - select department
             department_names = list(departments.keys())
             selected_department = st.selectbox(
@@ -163,6 +178,25 @@ def main():
                     st.warning(f"Please configure the Asana project ID for {selected_department} in departments.json")
                 else:
                     st.success(f"Department: {selected_department} | Project ID: {project_id[:8]}...")
+                    
+        else:  # project_meeting
+            # Project meeting - select project
+            project_names = list(projects.keys())
+            selected_project = st.selectbox(
+                "Select Project",
+                project_names,
+                help="Choose the project for task creation"
+            )
+            
+            if selected_project:
+                project_info = projects[selected_project]
+                project_id = project_info.get('asana_project_id', '')
+                selected_customer = selected_project  # Use project name as customer for consistency
+                
+                if project_id.startswith('YOUR_'):
+                    st.warning(f"Please configure the Asana project ID for {selected_project} in projects.json")
+                else:
+                    st.success(f"Project: {selected_project} | Project ID: {project_id[:8]}...")
         
         st.divider()
         
@@ -276,15 +310,25 @@ def main():
                         
                         # Analyze transcript
                         analyzer = GeminiAnalyzer()
-                        # Pass department for internal meetings
-                        department = selected_customer if st.session_state.meeting_type == "internal_meeting" else ""
+                        # Pass department for internal meetings, project for project meetings
+                        if st.session_state.meeting_type == "internal_meeting":
+                            department = selected_customer
+                            project = ""
+                        elif st.session_state.meeting_type == "project_meeting":
+                            department = ""
+                            project = selected_customer
+                        else:
+                            department = ""
+                            project = ""
+                        
                         analysis = analyzer.analyze_transcript(
                             st.session_state.extracted_text,
                             selected_customer,
                             f"Meeting transcript for {selected_customer}",
                             meeting_type=st.session_state.meeting_type,
                             recording_link=recording_link,
-                            department=department
+                            department=department,
+                            project=project
                         )
                         
                         # Store action items
@@ -356,10 +400,8 @@ def main():
                         section_name = f"{current_date} - {meeting_title}"
                         
                         # Create meeting context for task descriptions
-                        if st.session_state.meeting_type == "internal_meeting":
-                            meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"  # selected_customer is department name for internal
-                        else:
-                            meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"
+                        # Create appropriate context based on meeting type
+                        meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"
                         
                         # Create tasks with section
                         asana_client = AsanaTaskCreator()
@@ -391,6 +433,8 @@ def main():
             else:
                 if st.session_state.meeting_type == "internal_meeting":
                     st.error("Please configure the Asana project ID for this department in departments.json")
+                elif st.session_state.meeting_type == "project_meeting":
+                    st.error("Please configure the Asana project ID for this project in projects.json")
                 else:
                     st.error("Please configure the Asana project ID for this customer in customers.json")
     

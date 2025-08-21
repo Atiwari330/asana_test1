@@ -60,7 +60,8 @@ class GeminiAnalyzer:
                           additional_context: str = "",
                           meeting_type: str = "sales_call",
                           recording_link: str = "",
-                          department: str = "") -> TranscriptAnalysis:
+                          department: str = "",
+                          project: str = "") -> TranscriptAnalysis:
         """
         Analyze transcript and extract structured action items
         
@@ -68,7 +69,9 @@ class GeminiAnalyzer:
             transcript: The transcript text to analyze
             customer_name: Name of the customer/project
             additional_context: Any additional context about the meeting
-            meeting_type: Type of meeting ("sales_call" or "internal_meeting")
+            meeting_type: Type of meeting ("sales_call", "internal_meeting", or "project_meeting")
+            department: Department name for internal meetings
+            project: Project name for project meetings
             
         Returns:
             TranscriptAnalysis object with extracted data
@@ -78,10 +81,15 @@ class GeminiAnalyzer:
             # Check for department-specific prompts
             if department.lower() == "onboarding":
                 prompt = self._create_onboarding_prompt(transcript, additional_context)
-            elif "finpay" in department.lower() or "lsq" in department.lower():
-                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)
             else:
                 prompt = self._create_internal_prompt(transcript, additional_context)
+        elif meeting_type == "project_meeting":
+            # Check for project-specific prompts
+            if "finpay" in project.lower() or "lsq" in project.lower():
+                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)
+            else:
+                # Create a generic project prompt if needed in the future
+                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)  # Default to Finpay for now
         else:
             prompt = self._create_sales_prompt(transcript, customer_name, additional_context)
         
