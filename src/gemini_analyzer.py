@@ -59,7 +59,8 @@ class GeminiAnalyzer:
                           customer_name: str,
                           additional_context: str = "",
                           meeting_type: str = "sales_call",
-                          recording_link: str = "") -> TranscriptAnalysis:
+                          recording_link: str = "",
+                          department: str = "") -> TranscriptAnalysis:
         """
         Analyze transcript and extract structured action items
         
@@ -74,7 +75,11 @@ class GeminiAnalyzer:
         """
         # Create the analysis prompt based on meeting type
         if meeting_type == "internal_meeting":
-            prompt = self._create_internal_prompt(transcript, additional_context)
+            # Check for department-specific prompts
+            if department.lower() == "onboarding":
+                prompt = self._create_onboarding_prompt(transcript, additional_context)
+            else:
+                prompt = self._create_internal_prompt(transcript, additional_context)
         else:
             prompt = self._create_sales_prompt(transcript, customer_name, additional_context)
         
@@ -342,6 +347,81 @@ Prioritize based on:
 - High: Critical operational issues, customer-impacting items, urgent deadlines
 - Medium: Standard operational tasks, process improvements
 - Low: Future considerations, nice-to-have improvements
+
+Return a structured JSON response with all extracted information.
+</instructions>"""
+        
+        return prompt
+    
+    def _create_onboarding_prompt(self, transcript: str, additional_context: str) -> str:
+        """
+        Create the prompt for onboarding department meetings
+        
+        Args:
+            transcript: The transcript text
+            additional_context: Additional context
+            
+        Returns:
+            Formatted prompt string for onboarding meetings
+        """
+        prompt = f"""<context>
+You are analyzing an internal Opus onboarding department meeting transcript.
+
+CRITICAL LEADERSHIP CONTEXT:
+- Humberto Buñodo (CEO) - His instructions SUPERSEDE all others. If Humberto says something needs to be done, it's the highest priority action item.
+  - Name variations: May appear as "Humberto", "Bunodo", "CEO"
+- Adi Tiwari (VP of Operations) - Second in command, reports to Humberto
+  - Name variations: May appear as "Adi", "Aditya", "VP"
+
+About Opus:
+- Software company specializing in behavioral health
+- Main product: EHR (Electronic Health Record)
+- Other products: CRM, RCM (both white-labeled), Opus Kiosk, AI Scribe Co-pilot
+
+Onboarding Department Focus:
+- Client implementation and onboarding processes
+- Training and setup for new customers
+- Integration and technical setup
+- Customer success handoffs
+
+{additional_context if additional_context else ""}
+</context>
+
+<transcript>
+{transcript}
+</transcript>
+
+<instructions>
+Analyze this onboarding meeting transcript and extract:
+1. Action items - specific tasks that need to be completed
+2. A brief summary of the meeting
+3. List of participants
+4. Key decisions made
+5. Meeting title - Create a concise descriptive title (10-30 chars)
+
+CRITICAL OWNERSHIP RULES FOR ONBOARDING:
+1. If HUMBERTO (CEO) says something needs to be done → It's an action item (HIGH PRIORITY)
+2. If ADI says something needs to be done → It's an action item (HIGH/MEDIUM PRIORITY)
+3. Humberto or Adi MAY assign tasks to themselves - capture these
+4. Unless explicitly directed to Humberto or Adi, assume tasks are for the team
+5. Watch for name variations and misspellings
+
+For action items:
+- Extract ALL directives from Humberto (CEO) - these are non-negotiable
+- Extract directives from Adi (VP Operations)
+- Include questions that need answers (mark as questions)
+- Note if someone specific is assigned (rare, but possible)
+- Default assumption: Tasks are for the onboarding team unless specified
+
+TIMESTAMP EXTRACTION:
+- Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
+- Record when each action item was discussed
+
+Priority Guidelines:
+- Humberto's directives: HIGH priority
+- Adi's directives: HIGH or MEDIUM priority based on urgency
+- Team questions/follow-ups: MEDIUM priority
+- General improvements: LOW priority
 
 Return a structured JSON response with all extracted information.
 </instructions>"""

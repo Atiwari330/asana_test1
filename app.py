@@ -276,12 +276,15 @@ def main():
                         
                         # Analyze transcript
                         analyzer = GeminiAnalyzer()
+                        # Pass department for internal meetings
+                        department = selected_customer if st.session_state.meeting_type == "internal_meeting" else ""
                         analysis = analyzer.analyze_transcript(
                             st.session_state.extracted_text,
                             selected_customer,
                             f"Meeting transcript for {selected_customer}",
                             meeting_type=st.session_state.meeting_type,
-                            recording_link=recording_link
+                            recording_link=recording_link,
+                            department=department
                         )
                         
                         # Store action items

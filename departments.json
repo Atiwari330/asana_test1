@@ -16,7 +16,7 @@
       "description": "Customer success and support operations"
     },
     "Onboarding": {
-      "asana_project_id": "YOUR_ONBOARDING_PROJECT_ID",
+      "asana_project_id": "1211116494194833",
       "aliases": ["Onboarding", "Implementation"],
       "description": "Client onboarding and implementation"
     },
