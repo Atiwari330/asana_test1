@@ -454,7 +454,8 @@ def main():
                        "• Review contract and provide feedback by Friday\n\n"
                        "Tip: Enter multiple tasks on separate lines or separated by semicolons",
             height=120,
-            help="Enter one or more tasks. The AI will interpret your natural language and create structured tasks."
+            help="Enter one or more tasks. The AI will interpret your natural language and create structured tasks.",
+            key="quick_task_input"  # Add key for state management
         )
     
     with quick_task_col2:
@@ -522,6 +523,10 @@ def main():
                                     st.markdown(f"• [{task['name']}]({task['permalink_url']})")
                                 else:
                                     st.write(f"• {task['name']}")
+                            
+                            # Clear the text area for next use
+                            st.session_state.quick_task_input = ""
+                            st.rerun()  # Rerun to clear the text area
                         else:
                             st.error("Failed to create tasks in Asana")
                     else:

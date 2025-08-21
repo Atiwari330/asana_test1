@@ -58,6 +58,42 @@ class AsanaTaskCreator:
             logger.error(f"Failed to get user info: {e}")
             return {}
     
+    def get_or_create_section(self,
+                              project_id: str,
+                              section_name: str,
+                              workspace_id: Optional[str] = None) -> Optional[str]:
+        """
+        Get existing section or create a new one if it doesn't exist
+        
+        Args:
+            project_id: Asana project ID
+            section_name: Name for the section
+            workspace_id: Workspace ID (optional)
+            
+        Returns:
+            Section ID (existing or newly created), None if failed
+        """
+        logger.info(f"Checking for existing section: {section_name}")
+        
+        try:
+            # First, get all sections in the project
+            sections = self.sections_api.get_sections_for_project(project_id, {})
+            
+            # Check if section already exists
+            for section in sections:
+                if section.get('name') == section_name:
+                    logger.info(f"✅ Found existing section: {section_name} (ID: {section.get('gid')})")
+                    return section.get('gid')
+            
+            # Section doesn't exist, create it
+            logger.info(f"Section '{section_name}' not found, creating new section")
+            return self.create_section(project_id, section_name, workspace_id)
+            
+        except Exception as e:
+            logger.error(f"Error checking/creating section: {e}")
+            # Fall back to just creating (might fail if exists)
+            return self.create_section(project_id, section_name, workspace_id)
+    
     def create_section(self, 
                        project_id: str,
                        section_name: str,
@@ -153,15 +189,15 @@ class AsanaTaskCreator:
         logger.info(f"Meeting Context: {meeting_context}")
         logger.info(f"Number of action items: {len(action_items)}")
         
-        # Create section if section name is provided
+        # Get or create section if section name is provided
         section_id = None
         if section_name:
-            logger.info(f"Attempting to create section: {section_name}")
-            section_id = self.create_section(project_id, section_name, workspace_id)
+            logger.info(f"Attempting to get or create section: {section_name}")
+            section_id = self.get_or_create_section(project_id, section_name, workspace_id)
             if section_id:
-                logger.info(f"✅ Section created with ID: {section_id}")
+                logger.info(f"✅ Section ready with ID: {section_id}")
             else:
-                logger.error("❌ Failed to create section, continuing without section")
+                logger.error("❌ Failed to get/create section, continuing without section")
         
         created_tasks = []
         
