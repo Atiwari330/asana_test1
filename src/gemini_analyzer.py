@@ -630,6 +630,124 @@ Return a structured JSON response with all extracted information.
         """
         return self._create_sales_prompt(transcript, customer_name, additional_context)
     
+    def interpret_quick_tasks(self, 
+                             task_input: str, 
+                             context_name: str,
+                             context_type: str) -> List[Dict[str, str]]:
+        """
+        Interpret natural language task descriptions into structured tasks
+        Can handle multiple tasks separated by newlines or semicolons
+        
+        Args:
+            task_input: Natural language task description(s)
+            context_name: Name of customer/department/project for context
+            context_type: Type of context (Sales Call, Internal Meeting, Project Meeting)
+            
+        Returns:
+            List of task dictionaries with title, description, priority
+        """
+        # First, let AI determine if there are multiple tasks
+        detection_prompt = f"""Analyze this input and determine if it contains multiple separate tasks:
+
+Input: "{task_input}"
+
+Instructions:
+1. Identify if this contains ONE task or MULTIPLE tasks
+2. Multiple tasks might be separated by:
+   - New lines
+   - Semicolons
+   - Words like "and also", "additionally", "plus"
+   - Numbered or bulleted lists
+3. Each distinct action should be a separate task
+
+Return a JSON with:
+{{
+  "task_count": <number>,
+  "tasks": ["<task 1 text>", "<task 2 text>", ...]
+}}
+
+If it's one task, return task_count: 1 with the full text as the single task.
+"""
+        
+        try:
+            # Detect multiple tasks
+            detection_response = self.client.models.generate_content(
+                model=self.model,
+                contents=detection_prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.1
+                )
+            )
+            
+            detected = json.loads(detection_response.text)
+            individual_tasks = detected.get('tasks', [task_input])
+            
+            # Now process each task
+            all_tasks = []
+            
+            for task_text in individual_tasks:
+                if not task_text.strip():
+                    continue
+                    
+                interpretation_prompt = f"""Convert this natural language task instruction into a structured task:
+
+Task instruction: "{task_text}"
+
+Context:
+- Organization/Project: {context_name}
+- Meeting Type: {context_type}
+
+Extract and structure the following:
+1. Title: A clear, concise, action-oriented task title (5-10 words)
+2. Description: Detailed explanation including:
+   - Any specific details mentioned
+   - Timeline or deadline if mentioned
+   - People or resources mentioned
+   - Context about why this task is needed
+3. Priority: Determine based on urgency:
+   - "high" if mentions: urgent, ASAP, today, tomorrow, critical
+   - "medium" if mentions: this week, soon, next few days
+   - "low" if no urgency indicated or mentions: eventually, when possible, later
+
+Return ONLY a JSON object with this structure:
+{{
+  "title": "<clear action title>",
+  "description": "<detailed description>",
+  "priority": "<high|medium|low>"
+}}
+"""
+                
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=interpretation_prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.1
+                    )
+                )
+                
+                if response.text:
+                    task_data = json.loads(response.text)
+                    # Ensure all required fields
+                    if 'title' in task_data:
+                        all_tasks.append({
+                            'title': task_data.get('title', 'Quick Task'),
+                            'description': task_data.get('description', task_text),
+                            'priority': task_data.get('priority', 'medium')
+                        })
+            
+            return all_tasks
+            
+        except Exception as e:
+            logger.error(f"Error interpreting quick tasks: {str(e)}")
+            # Fallback: create a simple task from the input
+            return [{
+                'title': 'Quick Task',
+                'description': task_input,
+                'priority': 'medium'
+            }]
+    
     def extract_simple_action_items(self, transcript: str) -> List[Dict[str, str]]:
         """
         Simple extraction of action items without full analysis

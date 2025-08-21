@@ -438,6 +438,98 @@ def main():
                 else:
                     st.error("Please configure the Asana project ID for this customer in customers.json")
     
+    # Quick Task Section
+    st.divider()
+    st.header("⚡ Quick Task Creation")
+    st.info("Create tasks directly without uploading a transcript")
+    
+    quick_task_col1, quick_task_col2 = st.columns([2, 1])
+    
+    with quick_task_col1:
+        quick_task_text = st.text_area(
+            "Describe your task(s)",
+            placeholder="Examples:\n"
+                       "• Send follow-up email to John about pricing tomorrow\n"
+                       "• Schedule demo with Sarah for next Tuesday\n"
+                       "• Review contract and provide feedback by Friday\n\n"
+                       "Tip: Enter multiple tasks on separate lines or separated by semicolons",
+            height=120,
+            help="Enter one or more tasks. The AI will interpret your natural language and create structured tasks."
+        )
+    
+    with quick_task_col2:
+        st.write("**Current Selection:**")
+        if 'meeting_type' in st.session_state:
+            if st.session_state.meeting_type == "sales_call":
+                st.write(f"📊 Customer: {selected_customer if 'selected_customer' in locals() else 'None'}")
+            elif st.session_state.meeting_type == "internal_meeting":
+                st.write(f"🏢 Department: {selected_customer if 'selected_customer' in locals() else 'None'}")
+            else:
+                st.write(f"📁 Project: {selected_customer if 'selected_customer' in locals() else 'None'}")
+            
+            if 'project_id' in locals() and project_id and not project_id.startswith('YOUR_'):
+                st.write(f"✅ Ready to create tasks")
+            else:
+                st.write(f"⚠️ Configure project ID first")
+    
+    if st.button("🚀 Create Quick Task(s)", type="secondary", use_container_width=True):
+        if not quick_task_text.strip():
+            st.warning("Please enter a task description")
+        elif 'project_id' not in locals() or not project_id or project_id.startswith('YOUR_'):
+            st.error("Please select a valid customer/department/project with configured Asana ID")
+        else:
+            with st.spinner("Processing your request with AI..."):
+                try:
+                    from datetime import datetime
+                    
+                    # Get current date for section
+                    current_date = datetime.now().strftime("%m/%d")
+                    section_name = f"Quick Tasks - {current_date}"
+                    
+                    # Process with AI
+                    analyzer = GeminiAnalyzer()
+                    
+                    # Determine context based on meeting type
+                    context_type = st.session_state.meeting_type.replace("_", " ").title()
+                    context_name = selected_customer if 'selected_customer' in locals() else "General"
+                    
+                    # Interpret the quick task(s)
+                    interpreted_tasks = analyzer.interpret_quick_tasks(
+                        quick_task_text,
+                        context_name,
+                        context_type
+                    )
+                    
+                    if interpreted_tasks:
+                        # Create tasks in Asana
+                        asana_client = AsanaTaskCreator()
+                        
+                        # Check if section exists, create if not
+                        created_tasks = asana_client.create_tasks(
+                            interpreted_tasks,
+                            project_id,
+                            section_name=section_name,
+                            meeting_context=f"Quick Task - {context_name}"
+                        )
+                        
+                        if created_tasks:
+                            st.success(f"✅ Successfully created {len(created_tasks)} task(s) in Asana!")
+                            
+                            # Show created tasks
+                            st.subheader("Created Tasks:")
+                            for task in created_tasks:
+                                if task.get('permalink_url'):
+                                    st.markdown(f"• [{task['name']}]({task['permalink_url']})")
+                                else:
+                                    st.write(f"• {task['name']}")
+                        else:
+                            st.error("Failed to create tasks in Asana")
+                    else:
+                        st.error("Could not interpret the task description")
+                        
+                except Exception as e:
+                    st.error(f"Error processing quick task: {str(e)}")
+    
     # Status indicator in footer
     st.divider()
     status_col1, status_col2, status_col3 = st.columns(3)
