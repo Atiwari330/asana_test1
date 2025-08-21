@@ -524,9 +524,9 @@ def main():
                                 else:
                                     st.write(f"• {task['name']}")
                             
-                            # Clear the text area for next use
-                            st.session_state.quick_task_input = ""
-                            st.rerun()  # Rerun to clear the text area
+                            # Clear the text area for next use by deleting the key
+                            if 'quick_task_input' in st.session_state:
+                                del st.session_state.quick_task_input
                         else:
                             st.error("Failed to create tasks in Asana")
                     else:
