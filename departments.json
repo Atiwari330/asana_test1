@@ -1,0 +1,44 @@
+{
+  "departments": {
+    "Leadership": {
+      "asana_project_id": "YOUR_LEADERSHIP_PROJECT_ID",
+      "aliases": ["Leadership", "Executive"],
+      "description": "Leadership and executive meetings"
+    },
+    "Marketing": {
+      "asana_project_id": "YOUR_MARKETING_PROJECT_ID",
+      "aliases": ["Marketing", "Growth"],
+      "description": "Marketing and growth initiatives"
+    },
+    "Customer Success": {
+      "asana_project_id": "YOUR_CUSTOMER_SUCCESS_PROJECT_ID",
+      "aliases": ["Customer Success", "CS", "Support"],
+      "description": "Customer success and support operations"
+    },
+    "Onboarding": {
+      "asana_project_id": "YOUR_ONBOARDING_PROJECT_ID",
+      "aliases": ["Onboarding", "Implementation"],
+      "description": "Client onboarding and implementation"
+    },
+    "Operations": {
+      "asana_project_id": "1211106531309164",
+      "aliases": ["Operations", "Ops"],
+      "description": "General operations and cross-functional initiatives"
+    },
+    "Product": {
+      "asana_project_id": "YOUR_PRODUCT_PROJECT_ID",
+      "aliases": ["Product", "Development", "Engineering"],
+      "description": "Product development and engineering"
+    },
+    "Sales": {
+      "asana_project_id": "YOUR_SALES_PROJECT_ID",
+      "aliases": ["Sales", "Business Development"],
+      "description": "Sales team meetings and strategy"
+    },
+    "Finance": {
+      "asana_project_id": "YOUR_FINANCE_PROJECT_ID",
+      "aliases": ["Finance", "Accounting"],
+      "description": "Finance and accounting meetings"
+    }
+  }
+}

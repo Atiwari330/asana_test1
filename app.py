@@ -70,6 +70,19 @@ def load_customers() -> Dict:
         st.error("Invalid JSON in customers.json file.")
         return {}
 
+def load_departments() -> Dict:
+    """Load department configuration from JSON file"""
+    try:
+        with open('departments.json', 'r') as f:
+            data = json.load(f)
+            return data.get('departments', {})
+    except FileNotFoundError:
+        st.error("departments.json file not found. Please create it from the template.")
+        return {}
+    except json.JSONDecodeError:
+        st.error("Invalid JSON in departments.json file.")
+        return {}
+
 def check_api_keys() -> tuple:
     """Check if required API keys are configured"""
     asana_token = os.getenv('ASANA_ACCESS_TOKEN')
@@ -97,9 +110,10 @@ def main():
         st.info("Please copy .env.example to .env and add your API keys.")
         st.stop()
     
-    # Load customers
+    # Load customers and departments
     customers = load_customers()
-    if not customers:
+    departments = load_departments()
+    if not customers or not departments:
         st.stop()
     
     # Sidebar configuration
@@ -132,10 +146,23 @@ def main():
                 else:
                     st.success(f"Project ID: {project_id[:8]}...")
         else:
-            # Internal meeting - use fixed project
-            selected_customer = "Internal Meeting"
-            project_id = "1211106531309164"  # Fixed internal meetings project
-            st.info("Internal meetings will be added to the Ops Board")
+            # Internal meeting - select department
+            department_names = list(departments.keys())
+            selected_department = st.selectbox(
+                "Select Department",
+                department_names,
+                help="Choose the department for task creation"
+            )
+            
+            if selected_department:
+                department_info = departments[selected_department]
+                project_id = department_info.get('asana_project_id', '')
+                selected_customer = selected_department  # Use department name as customer for consistency
+                
+                if project_id.startswith('YOUR_'):
+                    st.warning(f"Please configure the Asana project ID for {selected_department} in departments.json")
+                else:
+                    st.success(f"Department: {selected_department} | Project ID: {project_id[:8]}...")
         
         st.divider()
         
@@ -315,7 +342,7 @@ def main():
         
         # Create tasks button
         if st.button("Create Tasks in Asana", type="primary", use_container_width=True):
-            if project_id and project_id != 'YOUR_ASANA_PROJECT_ID_HERE':
+            if project_id and not project_id.startswith('YOUR_'):
                 with st.spinner("Creating tasks in Asana..."):
                     try:
                         # Get current date for section naming
@@ -327,7 +354,7 @@ def main():
                         
                         # Create meeting context for task descriptions
                         if st.session_state.meeting_type == "internal_meeting":
-                            meeting_context = f"{current_date} - Internal: {meeting_title}"
+                            meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"  # selected_customer is department name for internal
                         else:
                             meeting_context = f"{current_date} - {selected_customer}: {meeting_title}"
                         
@@ -359,7 +386,10 @@ def main():
                     except Exception as e:
                         st.error(f"Error creating tasks: {str(e)}")
             else:
-                st.error("Please configure the Asana project ID for this customer in customers.json")
+                if st.session_state.meeting_type == "internal_meeting":
+                    st.error("Please configure the Asana project ID for this department in departments.json")
+                else:
+                    st.error("Please configure the Asana project ID for this customer in customers.json")
     
     # Status indicator in footer
     st.divider()
