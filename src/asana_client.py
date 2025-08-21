@@ -122,7 +122,8 @@ class AsanaTaskCreator:
                     project_id: str,
                     workspace_id: Optional[str] = None,
                     section_name: Optional[str] = None,
-                    meeting_context: Optional[str] = None) -> List[Dict]:
+                    meeting_context: Optional[str] = None,
+                    recording_link: Optional[str] = None) -> List[Dict]:
         """
         Create tasks in Asana from action items
         
@@ -132,6 +133,7 @@ class AsanaTaskCreator:
             workspace_id: Workspace ID (optional, will use first workspace if not provided)
             section_name: Name for the section to create (optional)
             meeting_context: Meeting context to add to task descriptions (optional)
+            recording_link: Link to the meeting recording (optional)
             
         Returns:
             List of created task details
@@ -167,10 +169,35 @@ class AsanaTaskCreator:
             try:
                 logger.info(f"\nCreating task {idx}/{len(action_items)}: {item.get('title', 'Unknown')}")
                 
-                # Add meeting context to description if provided
+                # Build enhanced description with context, link, and timestamp
+                original_desc = item.get('description', '')
+                timestamp = item.get('timestamp', None)
+                is_question = item.get('is_question', False)
+                
+                # Format the title for questions
+                if is_question and not item['title'].startswith('Customer Question:'):
+                    item['title'] = f"Customer Question: {item['title']}"
+                
+                # Build description sections
+                desc_parts = []
+                
+                # Add meeting context
                 if meeting_context:
-                    original_desc = item.get('description', '')
-                    item['description'] = f"📅 {meeting_context}\n{'━' * 30}\n{original_desc}"
+                    desc_parts.append(f"📅 {meeting_context}")
+                
+                # Add recording link with timestamp
+                if recording_link:
+                    if timestamp:
+                        desc_parts.append(f"🎥 Recording: {recording_link}")
+                        desc_parts.append(f"⏱️ Timestamp: {timestamp}")
+                    else:
+                        desc_parts.append(f"🎥 Recording: {recording_link}")
+                
+                # Add separator and original description
+                if desc_parts:
+                    item['description'] = '\n'.join(desc_parts) + f"\n{'━' * 30}\n{original_desc}"
+                else:
+                    item['description'] = original_desc
                 
                 task = self._create_single_task(item, project_id, workspace_id, section_id)
                 if task:

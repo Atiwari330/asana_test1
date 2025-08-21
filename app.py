@@ -52,6 +52,8 @@ def init_session_state():
         st.session_state.meeting_type = 'sales_call'
     if 'meeting_title' not in st.session_state:
         st.session_state.meeting_title = 'Meeting'
+    if 'recording_link' not in st.session_state:
+        st.session_state.recording_link = ''
 
 init_session_state()
 
@@ -184,10 +186,21 @@ def main():
             help="Upload a meeting transcript PDF from Grain, Gong, or similar tools"
         )
         
+        # Recording link input
+        recording_link = st.text_input(
+            "Recording Link",
+            placeholder="https://grain.com/share/recording/...",
+            help="Paste the link to the meeting recording (Grain, Gong, Zoom, etc.)"
+        )
+        
         if uploaded_file is not None:
             # Display file info
             file_size_mb = uploaded_file.size / (1024 * 1024)
             st.info(f"📎 {uploaded_file.name} ({file_size_mb:.2f} MB)")
+            
+            # Validate recording link
+            if not recording_link:
+                st.warning("⚠️ Please provide a recording link for reference")
             
             # Process button or auto-process
             if auto_process or st.button("Process Transcript", type="primary"):
@@ -231,13 +244,17 @@ def main():
             if st.button("Analyze with AI", type="primary") or (auto_process and st.session_state.processing_status == 'processing'):
                 with st.spinner("Analyzing transcript with Gemini AI..."):
                     try:
+                        # Store recording link in session state
+                        st.session_state.recording_link = recording_link
+                        
                         # Analyze transcript
                         analyzer = GeminiAnalyzer()
                         analysis = analyzer.analyze_transcript(
                             st.session_state.extracted_text,
                             selected_customer,
                             f"Meeting transcript for {selected_customer}",
-                            meeting_type=st.session_state.meeting_type
+                            meeting_type=st.session_state.meeting_type,
+                            recording_link=recording_link
                         )
                         
                         # Store action items
@@ -245,7 +262,9 @@ def main():
                             {
                                 'title': item.title,
                                 'description': item.description,
-                                'priority': item.priority or 'medium'
+                                'priority': item.priority or 'medium',
+                                'timestamp': getattr(item, 'timestamp', None),
+                                'is_question': getattr(item, 'is_question', False)
                             }
                             for item in analysis.action_items
                         ]
@@ -318,7 +337,8 @@ def main():
                             st.session_state.action_items,
                             project_id,
                             section_name=section_name,
-                            meeting_context=meeting_context
+                            meeting_context=meeting_context,
+                            recording_link=st.session_state.recording_link
                         )
                         
                         st.session_state.created_tasks = created_tasks

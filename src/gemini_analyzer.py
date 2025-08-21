@@ -20,6 +20,8 @@ class ActionItem(BaseModel):
     description: str = Field(description="Additional context and details about the task")
     priority: Optional[str] = Field(default="medium", description="Priority level: low, medium, or high")
     mentioned_by: Optional[str] = Field(default=None, description="Person who mentioned or owns this action")
+    timestamp: Optional[str] = Field(default=None, description="Timestamp in the recording where this was discussed (format: MM:SS or HH:MM:SS)")
+    is_question: bool = Field(default=False, description="Whether this is a customer question that needs answering")
 
 
 class TranscriptAnalysis(BaseModel):
@@ -56,7 +58,8 @@ class GeminiAnalyzer:
                           transcript: str, 
                           customer_name: str,
                           additional_context: str = "",
-                          meeting_type: str = "sales_call") -> TranscriptAnalysis:
+                          meeting_type: str = "sales_call",
+                          recording_link: str = "") -> TranscriptAnalysis:
         """
         Analyze transcript and extract structured action items
         
@@ -89,7 +92,9 @@ class GeminiAnalyzer:
                                 "title": {"type": "string"},
                                 "description": {"type": "string"},
                                 "priority": {"type": "string"},
-                                "mentioned_by": {"type": "string"}
+                                "mentioned_by": {"type": "string"},
+                                "timestamp": {"type": "string"},
+                                "is_question": {"type": "boolean"}
                             },
                             "required": ["title", "description"]
                         }
@@ -210,6 +215,20 @@ For action items, focus on:
 - Next steps discussed
 - Features or modules to demonstrate further
 - Implementation or timeline discussions
+
+TIMESTAMP EXTRACTION:
+- Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
+- Record the timestamp when each action item or question was discussed
+- If multiple timestamps, use the first clear mention
+- If no timestamp found, leave as null
+
+CUSTOMER QUESTIONS:
+- Mark items as questions (is_question: true) when:
+  - Customer explicitly asks "What about...?", "How does...?", "Can you...?"
+  - Customer requests information or clarification
+  - Topic requires follow-up research or answer
+- For questions, format title as: "Customer Question: [brief question]"
+- Include full context in description
 
 CRITICAL: Only extract action items that ADI TIWARI (the presenter/sales executive) explicitly owns or commits to:
 - Look for phrases like "I'll send", "I'll schedule", "I'll follow up", "Let me get you"
