@@ -230,7 +230,32 @@ CUSTOMER QUESTIONS:
 - For questions, format title as: "Customer Question: [brief question]"
 - Include full context in description
 
-CRITICAL: Only extract action items that ADI TIWARI (the presenter/sales executive) explicitly owns or commits to:
+MANDATORY TASKS FOR SALES CALLS - ALWAYS INCLUDE THESE TWO:
+(Use "{customer_name}" as the customer name in the titles below)
+
+1. SEND FOLLOW-UP EMAIL (ALWAYS REQUIRED):
+   - Title: "Send follow-up email to {customer_name}"
+   - Priority: high
+   - Description should include a HIGH-LEVEL SUMMARY (one paragraph):
+     * What was demonstrated/discussed (high-level topics, not technical details)
+     * Key points of interest from the customer
+     * Main concerns or requirements mentioned
+     * Next steps agreed upon
+   - Do NOT include technical implementation details or feature specifics
+   - Example: "Demonstrated the EHR platform focusing on scheduling and billing modules. Customer expressed interest in insurance verification features and workflow automation. Main concern was integration with existing systems. Agreed to schedule a follow-up call next week to discuss implementation timeline."
+
+2. UPDATE HUBSPOT (ALWAYS REQUIRED):
+   - Title: "Update HubSpot for {customer_name}"
+   - Priority: high
+   - Description MUST include these specific instructions:
+     * Update the 'Next Step' field in HubSpot for this deal
+     * Set the 'Next Activity Date' based on discussed timeline
+     * Create a task in HubSpot for the next action (e.g., "Follow up with client in one week", "Send pricing proposal by Friday")
+     * Log this call/meeting as an activity
+   - Include what the next action should be based on the conversation
+
+ADDITIONAL ACTION ITEMS:
+Then extract any OTHER action items that ADI TIWARI explicitly owns or commits to:
 - Look for phrases like "I'll send", "I'll schedule", "I'll follow up", "Let me get you"
 - Exclude tasks assigned to prospects/customers (like "Steve will send")
 - Exclude general discussion topics that aren't clear assignments
