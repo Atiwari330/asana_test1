@@ -78,6 +78,8 @@ class GeminiAnalyzer:
             # Check for department-specific prompts
             if department.lower() == "onboarding":
                 prompt = self._create_onboarding_prompt(transcript, additional_context)
+            elif "finpay" in department.lower() or "lsq" in department.lower():
+                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)
             else:
                 prompt = self._create_internal_prompt(transcript, additional_context)
         else:
@@ -422,6 +424,113 @@ Priority Guidelines:
 - Adi's directives: HIGH or MEDIUM priority based on urgency
 - Team questions/follow-ups: MEDIUM priority
 - General improvements: LOW priority
+
+Return a structured JSON response with all extracted information.
+</instructions>"""
+        
+        return prompt
+    
+    def _create_finpay_lsq_prompt(self, transcript: str, additional_context: str) -> str:
+        """
+        Create the prompt for Finpay <> LSQ Integration project meetings
+        
+        Args:
+            transcript: The transcript text
+            additional_context: Additional context
+            
+        Returns:
+            Formatted prompt string for Finpay LSQ integration meetings
+        """
+        prompt = f"""<context>
+You are analyzing a meeting transcript for the Finpay <> LSQ Integration project.
+
+PROJECT CONTEXT:
+This is a critical integration project between two companies:
+- Finpay: Third-party behavioral health company specializing in estimations and financial services
+- LSQ (Lead Squared): CRM platform that Opus white-labels as "Opus CRM"
+
+PROJECT GOAL: Integrate Finpay's services with Lead Squared (Opus CRM) to enable seamless data flow and functionality between the two platforms.
+
+KEY STAKEHOLDERS AND THEIR ROLES:
+
+OPUS TEAM:
+- Hector Fraginals - Chief Technology Officer (CTO) at Opus
+  - Technical decision maker, oversees integration architecture
+  - Name variations: May appear as "Hector", "CTO"
+- Adi Tiwari - VP of Operations at Opus
+  - Project coordination, operational requirements
+  - Name variations: May appear as "Adi", "VP Ops"
+
+FINPAY TEAM:
+- Linda Stewart - VP of Operations at Finpay
+  - Finpay's operational lead for integration
+  - Name variations: May appear as "Linda", "VP"
+- Lauren - Finpay team member
+  - Integration support and coordination
+- Rob - Finpay team member
+  - Technical or operational support
+
+ABOUT THE COMPANIES:
+- Opus: EHR (Electronic Health Record) company for behavioral health
+  - White-labels Lead Squared as "Opus CRM"
+  - Integration needs to work within Opus ecosystem
+- Finpay: Provides estimation and financial services for behavioral health
+- Lead Squared (LSQ): The underlying CRM platform
+
+{additional_context if additional_context else ""}
+</context>
+
+<transcript>
+{transcript}
+</transcript>
+
+<instructions>
+Analyze this Finpay <> LSQ Integration meeting transcript and extract:
+1. Action items - specific tasks related to the integration project
+2. A brief summary of the meeting
+3. List of participants (identify company affiliation when possible)
+4. Key technical or business decisions made
+5. Meeting title - Create a concise descriptive title (10-30 chars) focused on integration progress
+
+CRITICAL EXTRACTION RULES:
+1. Technical decisions from Hector (CTO) are HIGH priority
+2. Integration requirements from either side are HIGH priority
+3. Timeline commitments are HIGH priority
+4. Testing and validation tasks are MEDIUM-HIGH priority
+5. Documentation tasks are MEDIUM priority
+
+For action items, focus on:
+- Integration requirements and specifications
+- API endpoints or data mapping needs
+- Testing procedures and timelines
+- Blockers or dependencies between teams
+- Security or compliance requirements
+- Timeline commitments
+- Follow-up meetings or demos needed
+
+OWNERSHIP ATTRIBUTION:
+- Tasks for Opus team: Usually technical integration on Opus/LSQ side
+- Tasks for Finpay team: Usually related to their API/data requirements
+- Joint tasks: Testing, validation, documentation
+- Unless specified, technical tasks likely belong to the technical team mentioned
+
+TIMESTAMP EXTRACTION:
+- Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
+- Record when key decisions or commitments were made
+
+QUESTIONS TO HIGHLIGHT:
+- Mark items as questions (is_question: true) when:
+  - Technical clarification needed
+  - Business requirements unclear
+  - Timeline or priority uncertain
+- Format: "Integration Question: [specific question]"
+
+Priority Guidelines:
+- Blockers to integration: HIGH
+- Technical implementation tasks: HIGH
+- Testing and validation: MEDIUM-HIGH
+- Documentation: MEDIUM
+- Future enhancements: LOW
 
 Return a structured JSON response with all extracted information.
 </instructions>"""

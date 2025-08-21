@@ -69,6 +69,11 @@
       "asana_project_id": "1211106535372083",
       "aliases": ["Sanctuary Clinics"],
       "description": "Behavioral health services"
+    },
+    "Apex Transitional Housing": {
+      "asana_project_id": "1211116494194836",
+      "aliases": ["Apex Transitional Housing", "Apex"],
+      "description": "Transitional housing services"
     }
   }
 }
