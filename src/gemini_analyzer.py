@@ -368,8 +368,8 @@ Return a structured JSON response with all extracted information.
 You are analyzing an internal Opus onboarding department meeting transcript.
 
 CRITICAL LEADERSHIP CONTEXT:
-- Humberto Buñodo (CEO) - His instructions SUPERSEDE all others. If Humberto says something needs to be done, it's the highest priority action item.
-  - Name variations: May appear as "Humberto", "Bunodo", "CEO"
+- Humberto Buniotto (CEO) - His instructions SUPERSEDE all others. If Humberto says something needs to be done, it's the highest priority action item.
+  - Name variations: May appear as "Humberto", "Buniotto", "CEO"
 - Adi Tiwari (VP of Operations) - Second in command, reports to Humberto
   - Name variations: May appear as "Adi", "Aditya", "VP"
 
