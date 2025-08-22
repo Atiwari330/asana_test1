@@ -9,6 +9,11 @@
       "asana_project_id": "1211106531309164",
       "aliases": ["Operations", "Ops"],
       "description": "General operations and cross-functional initiatives"
+    },
+    "Sales": {
+      "asana_project_id": "1211124207848026",
+      "aliases": ["Sales", "Sales Sync", "Sales Team"],
+      "description": "Sales Sync meetings - pipeline review and deal strategy"
     }
   }
 }

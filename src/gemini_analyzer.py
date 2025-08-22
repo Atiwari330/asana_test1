@@ -81,6 +81,8 @@ class GeminiAnalyzer:
             # Check for department-specific prompts
             if department.lower() == "onboarding":
                 prompt = self._create_onboarding_prompt(transcript, additional_context)
+            elif department.lower() == "sales":
+                prompt = self._create_sales_dept_prompt(transcript, additional_context)
             else:
                 prompt = self._create_internal_prompt(transcript, additional_context)
         elif meeting_type == "project_meeting":
@@ -490,6 +492,124 @@ Priority Guidelines:
 - Adi's directives: HIGH or MEDIUM priority based on urgency
 - Team questions/follow-ups: MEDIUM priority
 - General improvements: LOW priority
+
+Return a structured JSON response with all extracted information.
+</instructions>"""
+        
+        return prompt
+    
+    def _create_sales_dept_prompt(self, transcript: str, additional_context: str) -> str:
+        """
+        Create the prompt for Sales Sync department meetings
+        
+        Args:
+            transcript: The transcript text
+            additional_context: Additional context
+            
+        Returns:
+            Formatted prompt string for sales sync meetings
+        """
+        prompt = f"""<context>
+You are analyzing a Sales Sync meeting transcript from Opus.
+
+MEETING PURPOSE:
+This is a weekly sales team sync where we:
+- Review open deals in the pipeline
+- Discuss strategies to close specific opportunities
+- Assign action items for advancing deals
+- Review marketing initiatives and campaigns
+- Discuss HubSpot hygiene and process improvements
+- Plan next steps for each opportunity
+
+KEY TEAM MEMBERS AND THEIR ROLES:
+- Adi Tiwari: VP of Operations, Sales Executive, primary demo person for all deals
+- Humberto Buniotto: CEO (highest authority)
+- Chris Garraffa: Account Executive
+- Nigel Green: Sales Consultant
+- Gabriel Lacap: Sales Account Engineer (notes, follow-ups, agreements)
+- Shawn Rickenbacker: Marketing Director
+
+IMPORTANT NAME SPELLINGS:
+- It's "Garraffa" not "Garofa" or "Garafa"
+- It's "Shawn" not "Sean" 
+- It's "Buniotto" not "Buñodo" or other variations
+- It's "Lacap" not "Lakap"
+
+About Opus:
+- Software company specializing in behavioral health
+- Main product: EHR (Electronic Health Record)
+- Other products: CRM (white-labeled Lead Squared), RCM, Opus Kiosk, AI Scribe Co-pilot
+- Sales process involves demos, pricing discussions, and implementation planning
+
+{additional_context if additional_context else ""}
+</context>
+
+<transcript>
+{transcript}
+</transcript>
+
+<instructions>
+Analyze this Sales Sync meeting transcript and extract:
+1. Action items - specific tasks with clear ownership
+2. A brief summary of the meeting
+3. List of participants
+4. Key decisions made
+5. Meeting title - Create a concise descriptive title (10-30 chars)
+
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. SUMMARY OF CALL:
+   - Title: "SUMMARY OF CALL"
+   - Priority: low
+   - Description: Comprehensive sales meeting summary including:
+     * Deals reviewed and their current status
+     * Key opportunities discussed with next steps
+     * Blockers or challenges for specific deals
+     * Marketing initiatives or campaigns discussed
+     * HubSpot process improvements or hygiene items
+     * Win/loss analysis if discussed
+     * Competitive intelligence shared
+     * Team member updates and capacity
+     * Strategic decisions or pivots
+     * Pipeline health and forecast
+     * Action items by deal owner
+   - This is informational documentation for the sales team
+
+CRITICAL OWNERSHIP RULES:
+1. CEO directives from Humberto are HIGHEST priority
+2. VP directives from Adi are HIGH priority
+3. Properly attribute tasks to the right person:
+   - Deal-specific tasks → Usually Chris, Nigel, or Adi (whoever owns the deal)
+   - Marketing tasks → Shawn Rickenbacker
+   - Agreement/documentation tasks → Gabriel Lacap
+   - HubSpot hygiene → Often team-wide or specific AE
+4. If unclear who owns a deal, look for context clues like "my deal" or "I'll follow up"
+
+For action items, focus on:
+- Follow-ups with specific prospects
+- Demo scheduling and preparation
+- Proposal and pricing tasks
+- Contract and agreement preparation
+- Marketing collateral needs
+- HubSpot updates and data entry
+- Competitive research needs
+- Internal process improvements
+
+DEAL ATTRIBUTION:
+- When action items relate to specific deals, include the company name
+- Format: "Follow up with [Company] about [topic]"
+- Track which AE owns which deal when mentioned
+
+TIMESTAMP EXTRACTION:
+- Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
+- Record when key decisions or commitments were made
+
+Priority Guidelines:
+- CEO directives: HIGH
+- Deal-closing activities: HIGH
+- Time-sensitive proposals: HIGH
+- Marketing campaigns: MEDIUM
+- HubSpot hygiene: MEDIUM
+- Process improvements: LOW
 
 Return a structured JSON response with all extracted information.
 </instructions>"""
