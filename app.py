@@ -393,6 +393,7 @@ def main():
                 with st.spinner("Creating tasks in Asana..."):
                     try:
                         # Get current date for section naming
+                        from datetime import datetime
                         current_date = datetime.now().strftime("%m/%d")
                         
                         # Create section name based on meeting type and title
