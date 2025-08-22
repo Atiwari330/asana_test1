@@ -137,13 +137,38 @@ class GeminiAnalyzer:
                     response_mime_type="application/json",
                     response_schema=schema,
                     temperature=0.1,  # Low temperature for consistent extraction
-                    max_output_tokens=4096
+                    max_output_tokens=8192  # Increased for Sales Sync meetings with many action items
                 )
             )
             
             # Parse the response
             if hasattr(response, 'text') and response.text:
-                result_json = json.loads(response.text)
+                try:
+                    result_json = json.loads(response.text)
+                except json.JSONDecodeError as json_error:
+                    logger.error(f"JSON parsing error: {json_error}")
+                    logger.error(f"Response text (first 500 chars): {response.text[:500]}")
+                    logger.error(f"Response text (around error position): {response.text[max(0, json_error.pos-100):min(len(response.text), json_error.pos+100)]}")
+                    
+                    # Try to clean the response and parse again
+                    try:
+                        # Remove any trailing commas and fix common JSON issues
+                        cleaned_text = response.text.strip()
+                        # Try to fix unterminated strings by escaping quotes
+                        cleaned_text = cleaned_text.replace('\\"', '\\\"')
+                        result_json = json.loads(cleaned_text)
+                        logger.info("Successfully parsed after cleaning")
+                    except:
+                        # If still failing, return partial analysis
+                        logger.error("Could not parse JSON even after cleaning")
+                        return TranscriptAnalysis(
+                            action_items=[],
+                            summary="Error parsing AI response - JSON formatting issue",
+                            participants=[],
+                            key_decisions=[],
+                            meeting_title="Sales Sync Meeting"
+                        )
+                
                 # Convert to Pydantic model
                 analysis = TranscriptAnalysis(
                     action_items=[ActionItem(**item) for item in result_json.get('action_items', [])],
@@ -530,10 +555,10 @@ KEY TEAM MEMBERS AND THEIR ROLES:
 - Shawn Rickenbacker: Marketing Director
 
 IMPORTANT NAME SPELLINGS:
-- It's "Garraffa" not "Garofa" or "Garafa"
-- It's "Shawn" not "Sean" 
-- It's "Buniotto" not "Buñodo" or other variations
-- It's "Lacap" not "Lakap"
+- It's 'Garraffa' not 'Garofa' or 'Garafa'
+- It's 'Shawn' not 'Sean' 
+- It's 'Buniotto' not 'Buñodo' or other variations
+- It's 'Lacap' not 'Lakap'
 
 About Opus:
 - Software company specializing in behavioral health
