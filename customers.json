@@ -74,6 +74,11 @@
       "asana_project_id": "1211116494194836",
       "aliases": ["Apex Transitional Housing", "Apex"],
       "description": "Transitional housing services"
+    },
+    "Teen Challenge Canada": {
+      "asana_project_id": "1211140845162340",
+      "aliases": ["Teen Challenge Canada", "Teen Challenge", "TCC"],
+      "description": "Faith-based addiction recovery program in Canada"
     }
   }
 }
