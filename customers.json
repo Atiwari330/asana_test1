@@ -79,6 +79,11 @@
       "asana_project_id": "1211140845162340",
       "aliases": ["Teen Challenge Canada", "Teen Challenge", "TCC"],
       "description": "Faith-based addiction recovery program in Canada"
+    },
+    "Salvation Army CA": {
+      "asana_project_id": "1211152480708223",
+      "aliases": ["Salvation Army CA", "Salvation Army Canada", "Salvation Army"],
+      "description": "Salvation Army operations in Canada"
     }
   }
 }
