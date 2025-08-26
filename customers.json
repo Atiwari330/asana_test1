@@ -84,6 +84,11 @@
       "asana_project_id": "1211152480708223",
       "aliases": ["Salvation Army CA", "Salvation Army Canada", "Salvation Army"],
       "description": "Salvation Army operations in Canada"
+    },
+    "We Fix Brains": {
+      "asana_project_id": "1211154624487194",
+      "aliases": ["We Fix Brains", "WFB"],
+      "description": "Behavioral health and brain wellness services"
     }
   }
 }
