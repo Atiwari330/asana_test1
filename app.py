@@ -587,7 +587,10 @@ def main():
                         # First extract text from PDF
                         from src.pdf_processor import PDFProcessor
                         pdf_processor = PDFProcessor()
-                        pdf_text = pdf_processor.extract_text(uploaded_pdf)
+                        # Convert UploadedFile to bytes
+                        pdf_bytes = uploaded_pdf.read()
+                        uploaded_pdf.seek(0)  # Reset file pointer
+                        pdf_text = pdf_processor.extract_text(pdf_bytes)
                         
                         if not pdf_text or pdf_text.strip() == "":
                             st.error("Could not extract text from PDF. Please try a different file.")
