@@ -1135,6 +1135,114 @@ Format the output as natural language tasks that can be directly used for task c
             logger.error(f"Image analysis failed: {e}")
             raise Exception(f"Failed to analyze image: {str(e)}")
     
+    def analyze_pdf_for_tasks(self,
+                              pdf_text: str,
+                              customer_name: str,
+                              meeting_type: str,
+                              customer_context: str = "") -> str:
+        """
+        Analyze PDF text (email conversation, document) and extract tasks
+        
+        Args:
+            pdf_text: Extracted text from PDF
+            customer_name: Name of the customer/project
+            meeting_type: Type of meeting context
+            customer_context: Additional context for existing customers
+            
+        Returns:
+            Extracted tasks and context as a string
+        """
+        # Create context-aware prompt based on meeting type
+        if meeting_type == "existing_customer" and customer_context:
+            context_prompt = f"""
+You are analyzing a PDF document (likely an email conversation or thread) related to an existing customer: {customer_name}
+
+CUSTOMER CONTEXT:
+{customer_context}
+
+IMPORTANT: This is an existing customer in onboarding. The VP of Operations (Adi) handles escalations but delegates work to:
+- Janelle Hall or Laura for onboarding issues
+- Hector Fraginals (CTO) for technical problems  
+- John for support issues
+
+CONVERSATION ANALYSIS INSTRUCTIONS:
+1. Identify the type of document (email thread, single email, document)
+2. Understand the full context of the conversation
+3. Identify all participants and their roles
+4. Track the flow of the conversation and any decisions made
+5. Extract the main issues, requests, or concerns raised
+6. Determine what specific actions need to be taken
+7. Consider who should handle each action based on the customer context
+8. Note any deadlines, urgency indicators, or commitments made
+"""
+        else:
+            context_prompt = f"""
+You are analyzing a PDF document related to: {customer_name}
+Meeting Type: {meeting_type}
+
+CONVERSATION ANALYSIS INSTRUCTIONS:
+1. Identify the type of document (email thread, single email, document)
+2. Understand the full context of the conversation
+3. Identify all participants and their roles
+4. Extract the main issues, requests, or concerns raised
+5. Determine what specific actions need to be taken
+6. Note any deadlines or urgency indicators
+"""
+        
+        prompt = f"""{context_prompt}
+
+PDF CONTENT TO ANALYZE:
+{pdf_text[:15000]}  # Limit to first 15000 chars to avoid token limits
+
+Based on the complete conversation/document above, extract and format:
+
+1. CONVERSATION SUMMARY:
+   - Document Type: [Email thread/Single email/Document]
+   - Main Participants: [List key people involved]
+   - Date Range: [If visible in the content]
+   - Overall Topic: [Main subject of discussion]
+   - Urgency Level: [Low/Medium/High/Critical based on content and tone]
+
+2. KEY ISSUES/REQUESTS IDENTIFIED:
+   [List each distinct issue, request, or concern raised in the conversation]
+   - Include who raised it and any context
+   - Note any responses or resolutions already discussed
+
+3. ACTIONABLE TASKS:
+   [Extract clear, specific tasks that need to be done]
+   - Be very specific and include relevant context from the conversation
+   - Include any commitments made or deadlines mentioned
+   - Reference specific requests from the customer
+   - Format: "Task: [specific action] - Context: [why this is needed based on conversation]"
+
+4. SUGGESTED DELEGATION:
+   [For each task, suggest who should handle it based on the context]
+   - Consider the nature of each task and appropriate team member
+   - For existing customers, default to Janelle/Laura for onboarding tasks
+
+5. CRITICAL INFORMATION:
+   - Any promises or commitments made
+   - Deadlines or time-sensitive items
+   - Escalation triggers or customer satisfaction concerns
+   - Technical requirements or integration needs mentioned
+
+Format the output as clear, actionable tasks that capture the full context of the conversation."""
+        
+        try:
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=prompt
+            )
+            
+            if response and response.text:
+                return response.text
+            else:
+                return "Unable to extract tasks from the PDF. Please try again or enter tasks manually."
+                
+        except Exception as e:
+            logger.error(f"PDF analysis for tasks failed: {e}")
+            raise Exception(f"Failed to analyze PDF: {str(e)}")
+    
     def interpret_quick_tasks(self, 
                              task_input: str, 
                              context_name: str,

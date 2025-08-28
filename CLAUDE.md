@@ -127,10 +127,23 @@ Optional:
 
 ### Quick Task Feature
 
-The app supports "Quick Tasks" mode for creating tasks without transcript processing:
+The app supports "Quick Tasks" mode with three input methods:
+
+**Text Input Tab**:
+- Manual entry of task descriptions
 - Interprets natural language task descriptions
 - Can handle multiple tasks separated by newlines or semicolons
-- Uses AI to structure tasks appropriately
+
+**Image Upload Tab**:
+- Upload email/Slack screenshots for automatic task extraction
+- Uses Gemini vision API for image analysis
+- Applies customer context for intelligent delegation
+
+**PDF Upload Tab**:
+- Upload PDF email conversations or documents
+- Analyzes entire conversation context
+- Extracts tasks with full conversation awareness
+- For existing customers: Automatically suggests delegation to appropriate team members
 
 ### Session State Management
 

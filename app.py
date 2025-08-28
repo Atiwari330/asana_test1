@@ -484,10 +484,10 @@ def main():
     # Quick Task Section
     st.divider()
     st.header("⚡ Quick Task Creation")
-    st.info("Create tasks directly without uploading a transcript, or upload an email screenshot for automatic task extraction")
+    st.info("Create tasks directly from text, upload email screenshots, or upload PDF conversations for automatic task extraction")
     
     # Add tabs for different input methods
-    quick_task_tab1, quick_task_tab2 = st.tabs(["📝 Text Input", "📸 Image Upload"])
+    quick_task_tab1, quick_task_tab2, quick_task_tab3 = st.tabs(["📝 Text Input", "📸 Image Upload", "📄 PDF Upload"])
     
     with quick_task_tab1:
         quick_task_col1, quick_task_col2 = st.columns([2, 1])
@@ -564,8 +564,83 @@ def main():
                     help="These tasks were extracted from your last image upload"
                 )
     
+    with quick_task_tab3:
+        st.write("Upload a PDF of an email conversation or document to extract tasks")
+        uploaded_pdf = st.file_uploader(
+            "Choose a PDF file",
+            type=['pdf'],
+            help="Upload a PDF of an email thread or conversation for task extraction",
+            key="quick_task_pdf_upload"
+        )
+        
+        quick_task_text_pdf = ""
+        
+        if uploaded_pdf is not None:
+            # Display PDF info
+            file_size_mb = uploaded_pdf.size / (1024 * 1024)
+            st.info(f"📄 {uploaded_pdf.name} ({file_size_mb:.2f} MB)")
+            
+            # Extract tasks from PDF button
+            if st.button("🔍 Extract Tasks from PDF", type="secondary"):
+                with st.spinner("Processing PDF and analyzing conversation..."):
+                    try:
+                        # First extract text from PDF
+                        from src.pdf_processor import PDFProcessor
+                        pdf_processor = PDFProcessor()
+                        pdf_text = pdf_processor.extract_text(uploaded_pdf)
+                        
+                        if not pdf_text or pdf_text.strip() == "":
+                            st.error("Could not extract text from PDF. Please try a different file.")
+                        else:
+                            # Show extracted text preview
+                            with st.expander("📋 View Extracted Text", expanded=False):
+                                st.text_area("PDF Content", pdf_text[:3000] + "..." if len(pdf_text) > 3000 else pdf_text, height=200, disabled=True)
+                            
+                            # Analyze with Gemini
+                            analyzer = GeminiAnalyzer()
+                            
+                            # Get the appropriate context based on meeting type
+                            if st.session_state.meeting_type == "existing_customer" and 'selected_customer' in locals():
+                                existing_customer_info = existing_customers.get(selected_customer, {})
+                                customer_context = existing_customer_info.get('context', '')
+                            else:
+                                customer_context = ""
+                            
+                            # Analyze the PDF conversation
+                            pdf_analysis = analyzer.analyze_pdf_for_tasks(
+                                pdf_text,
+                                selected_customer if 'selected_customer' in locals() else "Unknown Customer",
+                                st.session_state.meeting_type,
+                                customer_context
+                            )
+                            
+                            # Store the extracted tasks in session state
+                            st.session_state['pdf_extracted_text'] = pdf_analysis
+                            st.success("✅ Successfully analyzed PDF conversation!")
+                            quick_task_text_pdf = st.text_area(
+                                "Extracted Tasks from Conversation", 
+                                pdf_analysis, 
+                                height=250, 
+                                help="Review and edit the extracted tasks if needed"
+                            )
+                    except Exception as e:
+                        st.error(f"Error processing PDF: {str(e)}")
+        
+        # Use extracted text if available
+        if 'pdf_extracted_text' in st.session_state and not quick_task_text_pdf:
+            quick_task_text_pdf = st.session_state.get('pdf_extracted_text', '')
+            if quick_task_text_pdf:
+                st.text_area(
+                    "Previously Extracted Tasks", 
+                    quick_task_text_pdf, 
+                    height=250,
+                    help="These tasks were extracted from your last PDF upload"
+                )
+    
     # Determine which text to use based on active tab
-    if 'quick_task_text_image' in locals() and quick_task_text_image:
+    if 'quick_task_text_pdf' in locals() and quick_task_text_pdf:
+        quick_task_text = quick_task_text_pdf
+    elif 'quick_task_text_image' in locals() and quick_task_text_image:
         quick_task_text = quick_task_text_image
     else:
         quick_task_text = quick_task_text_input if 'quick_task_text_input' in locals() else ""
