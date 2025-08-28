@@ -96,6 +96,19 @@ def load_projects() -> Dict:
         st.error("Invalid JSON in projects.json file.")
         return {}
 
+def load_existing_customers() -> Dict:
+    """Load existing customers configuration from JSON file"""
+    try:
+        with open('existing_customers.json', 'r') as f:
+            data = json.load(f)
+            return data.get('existing_customers', {})
+    except FileNotFoundError:
+        st.error("existing_customers.json file not found. Please create it from the template.")
+        return {}
+    except json.JSONDecodeError:
+        st.error("Invalid JSON in existing_customers.json file.")
+        return {}
+
 def check_api_keys() -> tuple:
     """Check if required API keys are configured"""
     asana_token = os.getenv('ASANA_ACCESS_TOKEN')
@@ -123,10 +136,11 @@ def main():
         st.info("Please copy .env.example to .env and add your API keys.")
         st.stop()
     
-    # Load customers, departments, and projects
+    # Load customers, departments, projects, and existing customers
     customers = load_customers()
     departments = load_departments()
     projects = load_projects()
+    existing_customers = load_existing_customers()
     if not customers or not departments:
         st.stop()
     
@@ -137,7 +151,7 @@ def main():
         # Meeting type selection
         meeting_type = st.radio(
             "Meeting Type",
-            ["Sales Call", "Internal Meeting", "Project Meeting"],
+            ["Sales Call", "Internal Meeting", "Project Meeting", "Existing Customer"],
             help="Select the type of meeting transcript"
         )
         st.session_state.meeting_type = meeting_type.lower().replace(" ", "_")
@@ -179,7 +193,7 @@ def main():
                 else:
                     st.success(f"Department: {selected_department} | Project ID: {project_id[:8]}...")
                     
-        else:  # project_meeting
+        elif st.session_state.meeting_type == "project_meeting":
             # Project meeting - select project
             project_names = list(projects.keys())
             selected_project = st.selectbox(
@@ -197,6 +211,25 @@ def main():
                     st.warning(f"Please configure the Asana project ID for {selected_project} in projects.json")
                 else:
                     st.success(f"Project: {selected_project} | Project ID: {project_id[:8]}...")
+                    
+        else:  # existing_customer
+            # Existing customer - select from existing customers
+            existing_customer_names = list(existing_customers.keys())
+            selected_existing_customer = st.selectbox(
+                "Select Existing Customer",
+                existing_customer_names,
+                help="Choose the existing customer for escalation/task creation"
+            )
+            
+            if selected_existing_customer:
+                existing_customer_info = existing_customers[selected_existing_customer]
+                project_id = existing_customer_info.get('asana_project_id', '')
+                selected_customer = selected_existing_customer  # Use existing customer name for consistency
+                
+                if project_id == 'YOUR_ASANA_PROJECT_ID_HERE':
+                    st.warning(f"Please configure the Asana project ID for {selected_existing_customer} in existing_customers.json")
+                else:
+                    st.success(f"Existing Customer: {selected_existing_customer} | Project ID: {project_id[:8]}...")
         
         st.divider()
         
@@ -310,21 +343,30 @@ def main():
                         
                         # Analyze transcript
                         analyzer = GeminiAnalyzer()
-                        # Pass department for internal meetings, project for project meetings
+                        # Pass department for internal meetings, project for project meetings, context for existing customers
                         if st.session_state.meeting_type == "internal_meeting":
                             department = selected_customer
                             project = ""
+                            additional_context = ""
                         elif st.session_state.meeting_type == "project_meeting":
                             department = ""
                             project = selected_customer
+                            additional_context = ""
+                        elif st.session_state.meeting_type == "existing_customer":
+                            department = ""
+                            project = ""
+                            # Get customer-specific context from existing_customers.json
+                            existing_customer_info = existing_customers.get(selected_customer, {})
+                            additional_context = existing_customer_info.get('context', '')
                         else:
                             department = ""
                             project = ""
+                            additional_context = ""
                         
                         analysis = analyzer.analyze_transcript(
                             st.session_state.extracted_text,
                             selected_customer,
-                            f"Meeting transcript for {selected_customer}",
+                            additional_context if additional_context else f"Meeting transcript for {selected_customer}",
                             meeting_type=st.session_state.meeting_type,
                             recording_link=recording_link,
                             department=department,

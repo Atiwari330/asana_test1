@@ -67,15 +67,25 @@ Note: Test directory structure needs to be created as tests are not yet implemen
   - Sales: 1211124207848026
   - Support Leadership and Ops: 1211163265698003
 - **projects.json** - Maps special projects (Finpay, LSQ) to Asana projects
+- **existing_customers.json** - Maps existing customers to their escalation projects with custom context
 
-### Department-Specific Prompt Routing
+### Meeting Type and Prompt Routing
 
-The system uses intelligent routing in `gemini_analyzer.py`:
-- Checks department name (case-insensitive):
-  - "onboarding" → `_create_onboarding_prompt()`
-  - "sales" → `_create_sales_dept_prompt()`
-  - Contains "support" → `_create_support_prompt()`
-  - Default → `_create_internal_prompt()`
+The system uses intelligent routing in `gemini_analyzer.py` based on meeting type:
+
+**Internal Meetings** - Checks department name (case-insensitive):
+- "onboarding" → `_create_onboarding_prompt()`
+- "sales" → `_create_sales_dept_prompt()`
+- Contains "support" → `_create_support_prompt()`
+- Default → `_create_internal_prompt()`
+
+**Project Meetings**:
+- Contains "finpay" or "lsq" → `_create_finpay_lsq_prompt()`
+
+**Existing Customers**:
+- Routes to `_create_existing_customer_prompt()`
+- Injects customer-specific context from `existing_customers.json`
+- Focuses on escalation handling and task delegation
 
 ### Key Context for Support Department
 
@@ -88,6 +98,14 @@ When working with Support Leadership and Ops:
   - Dosespot: E-prescribing/medication management
   - LeadSquared (LSQ): CRM provider
   - Imagine/Opus RCM: Revenue cycle management
+
+### Key Context for Existing Customers
+
+For existing customer escalations:
+- Default contacts: Janelle or Laura (onboarding team)
+- Adi Tiwari: VP of Ops/Account Executive handling escalations
+- Focus: Delegation of resolution tasks while maintaining customer relationship
+- Customer-specific context stored in `existing_customers.json`
 
 ### Environment Variables
 

@@ -94,6 +94,9 @@ class GeminiAnalyzer:
             else:
                 # Create a generic project prompt if needed in the future
                 prompt = self._create_finpay_lsq_prompt(transcript, additional_context)  # Default to Finpay for now
+        elif meeting_type == "existing_customer":
+            # Use existing customer escalation prompt
+            prompt = self._create_existing_customer_prompt(transcript, customer_name, additional_context)
         else:
             prompt = self._create_sales_prompt(transcript, customer_name, additional_context)
         
@@ -887,6 +890,118 @@ Priority Guidelines:
 TIMESTAMP EXTRACTION:
 - Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
 - Record when key issues or escalations were raised
+
+Return a structured JSON response with all extracted information.
+</instructions>"""
+        
+        return prompt
+    
+    def _create_existing_customer_prompt(self, transcript: str, customer_name: str, additional_context: str) -> str:
+        """
+        Create the prompt for existing customer escalation meetings
+        
+        Args:
+            transcript: The transcript text
+            customer_name: Name of the existing customer
+            additional_context: Customer-specific context from JSON
+            
+        Returns:
+            Formatted prompt string for existing customer escalations
+        """
+        prompt = f"""<context>
+You are analyzing a meeting transcript for an existing Opus customer who is experiencing issues or escalations during their onboarding phase.
+
+MEETING PURPOSE:
+This is an escalation or issue resolution meeting for an existing customer who has already purchased Opus and is currently in the onboarding/implementation phase. The VP of Operations (Adi Tiwari) is handling the escalation as the Account Executive and needs to delegate tasks appropriately.
+
+KEY TEAM MEMBERS AND DEFAULT ASSIGNEES:
+- Adi Tiwari: VP of Operations and Account Executive (handles customer escalations and relationships)
+- Janelle: Lead Onboarding Director (primary contact for onboarding issues)
+- Laura: Onboarding team member (assists with onboarding tasks)
+- Hector Fraginals: Chief Technology Officer (for technical/engineering escalations)
+- John: Support Lead (for support-related issues)
+
+ESCALATION WORKFLOW:
+1. Customer raises issue to their Account Executive (Adi)
+2. Adi responds to customer via email/Slack to acknowledge and set expectations
+3. Adi creates tasks to delegate the actual work to the appropriate team
+4. Team members handle their assigned tasks
+5. Adi follows up with customer on resolution
+
+CUSTOMER-SPECIFIC CONTEXT:
+Customer: {customer_name}
+{additional_context if additional_context else "No additional context provided for this customer."}
+</context>
+
+<transcript>
+{transcript}
+</transcript>
+
+<instructions>
+Analyze this existing customer escalation transcript and extract:
+1. Action items - specific tasks with clear delegation intent
+2. A brief summary of the meeting/escalation
+3. List of participants
+4. Key decisions made
+5. Meeting title - Create a concise descriptive title (10-30 chars)
+
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. ESCALATION SUMMARY:
+   - Title: "ESCALATION SUMMARY"
+   - Priority: low
+   - Description: Comprehensive escalation overview including:
+     * Nature of the customer's issue or concern
+     * Current status of their onboarding/implementation
+     * Specific problems or blockers identified
+     * Customer's expectations and timeline requirements
+     * Proposed resolution approach
+     * Teams that need to be involved (Onboarding, Engineering, Support)
+     * Risk assessment (impact on go-live date, customer satisfaction)
+     * Follow-up requirements with the customer
+   - This is documentation for reference, not an action item requiring work
+
+For additional action items, focus on:
+- Onboarding tasks that need to be completed or fixed
+- Technical issues requiring engineering attention
+- Configuration or setup problems
+- Training or documentation needs
+- Process improvements identified
+- Customer communication and follow-ups
+- Internal coordination between teams
+
+DELEGATION GUIDELINES:
+- Onboarding issues → Janelle or Laura
+- Technical/system issues → Hector (CTO)
+- Support process issues → John (Support Lead)
+- Customer communication → Usually remains with Adi
+- If unclear, note "Assignee: TBD - [suggested team]"
+
+TASK FORMATTING:
+- Create clear, actionable tasks that someone can pick up and execute
+- Include enough context so the assignee understands the customer situation
+- Format: "[Action Required]: [Specific task for customer name]"
+- Include any deadlines or urgency mentioned by the customer
+
+CUSTOMER CONTEXT AWARENESS:
+- Consider the customer-specific context provided above
+- Note any special requirements or sensitivities mentioned
+- Flag if the issue relates to promises made during sales
+- Identify if this is a recurring issue or new problem
+
+Priority Guidelines:
+- Customer-blocking issues: HIGH
+- Issues affecting go-live date: HIGH
+- Configuration/setup tasks: MEDIUM
+- Documentation/training: MEDIUM
+- Process improvements: LOW
+- Summary: LOW (always)
+
+IMPORTANT NOTES:
+- These are existing paying customers, not prospects
+- Focus on resolution and maintaining customer satisfaction
+- Tasks should enable delegation while Adi maintains customer relationship
+- Don't assign tasks directly - leave assignee field empty for manual assignment
+- Include customer name in task titles for clarity
 
 Return a structured JSON response with all extracted information.
 </instructions>"""

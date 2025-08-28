@@ -1,0 +1,16 @@
+{
+  "existing_customers": {
+    "Family Houston": {
+      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
+      "aliases": ["Family Houston"],
+      "context": "Behavioral health recovery center in Houston. Currently in onboarding phase. Main contact: TBD. High priority client with specialized detox and residential services.",
+      "description": "Behavioral health recovery center - Existing client"
+    },
+    "Ulster County": {
+      "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
+      "aliases": ["Ulster County", "Ulster"],
+      "context": "County mental health services in New York. Government client with specific compliance requirements. Main contact: TBD. Requires careful coordination with county officials.",
+      "description": "County mental health services - Existing client"
+    }
+  }
+}
