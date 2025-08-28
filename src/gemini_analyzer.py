@@ -83,6 +83,8 @@ class GeminiAnalyzer:
                 prompt = self._create_onboarding_prompt(transcript, additional_context)
             elif department.lower() == "sales":
                 prompt = self._create_sales_dept_prompt(transcript, additional_context)
+            elif "support" in department.lower():
+                prompt = self._create_support_prompt(transcript, additional_context)
             else:
                 prompt = self._create_internal_prompt(transcript, additional_context)
         elif meeting_type == "project_meeting":
@@ -762,6 +764,129 @@ Priority Guidelines:
 - Testing and validation: MEDIUM-HIGH
 - Documentation: MEDIUM
 - Future enhancements: LOW
+
+Return a structured JSON response with all extracted information.
+</instructions>"""
+        
+        return prompt
+    
+    def _create_support_prompt(self, transcript: str, additional_context: str) -> str:
+        """
+        Create the prompt for Support Leadership and Ops department meetings
+        
+        Args:
+            transcript: The transcript text
+            additional_context: Additional context
+            
+        Returns:
+            Formatted prompt string for support meetings
+        """
+        prompt = f"""<context>
+You are analyzing a Support Leadership and Ops meeting transcript from Opus.
+
+MEETING PURPOSE:
+This is a support, leadership, and operations meeting focusing on:
+- Bug tracking and resolution
+- Vendor/partner management and escalations
+- Cross-functional initiatives
+- Support ticket priorities and workflows
+- Technical escalations and issues
+- Customer issue resolution strategies
+
+KEY TEAM MEMBERS AND THEIR ROLES:
+- John: Support Lead, internal employee responsible for day-to-day support operations
+- Adi Tiwari: VP of Operations, oversees Support Leadership and Ops department
+- Hector Fraginals: Chief Technology Officer (CTO), handles engineering escalations
+- Janelle: Lead Onboarding Director, handles onboarding-related support issues
+
+IMPORTANT CONTEXT ABOUT OPUS:
+- We're an EHR (Electronic Health Record) company in the behavioral health space
+- We get many bug reports and support tickets that need tracking
+- Support often collaborates with Engineering (Hector/CTO) for technical issues
+- Support coordinates with Onboarding (Janelle) for implementation issues
+
+VENDOR/PARTNER INFORMATION:
+When these vendors are mentioned, use the following context:
+- Dosespot: E-prescribing and medication management partner
+  * Issues related to medication ordering, prescriptions, controlled substances
+  * API integration issues with e-prescribing
+- LeadSquared (LSQ): White-labeled CRM solution provider
+  * CRM functionality issues
+  * Lead management and tracking problems
+  * Marketing automation concerns
+- Imagine (referred to as "Opus RCM"): Revenue Cycle Management partner
+  * Billing and claims issues
+  * Insurance verification problems
+  * Payment processing concerns
+
+{additional_context if additional_context else ""}
+</context>
+
+<transcript>
+{transcript}
+</transcript>
+
+<instructions>
+Analyze this Support Leadership and Ops meeting transcript and extract:
+1. Action items - specific tasks with clear ownership
+2. A brief summary of the meeting
+3. List of participants
+4. Key decisions made
+5. Meeting title - Create a concise descriptive title (10-30 chars)
+
+MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
+1. SUMMARY OF MEETING:
+   - Title: "SUMMARY OF MEETING"
+   - Priority: low
+   - Description: Comprehensive support meeting overview including:
+     * Major bugs or issues discussed and their priority
+     * Customer escalations and resolution strategies
+     * Vendor/partner issues (Dosespot, LSQ, Opus RCM)
+     * Engineering escalations to Hector/CTO
+     * Onboarding support issues for Janelle
+     * Support workflow improvements or process changes
+     * Resource allocation and capacity planning
+     * Cross-functional coordination needs
+     * Training needs or knowledge gaps identified
+     * Key metrics or KPIs discussed
+   - This is NOT an action item - it's informational documentation
+   - Write as a narrative for team members who weren't present
+
+For additional action items, focus on:
+- Bug tickets that need to be created or tracked
+- Customer escalations requiring follow-up
+- Vendor issues needing escalation (specify which vendor)
+- Engineering tasks for Hector's team
+- Onboarding support items for Janelle's team
+- Process improvements or documentation needs
+- Training or knowledge transfer requirements
+- Cross-team coordination tasks
+
+OWNERSHIP RULES:
+- Support tasks → Usually John (Support Lead)
+- Operations/strategic tasks → Adi (VP of Ops)
+- Engineering/technical escalations → Hector (CTO)
+- Onboarding-related support → Janelle
+- Vendor escalations → Specify the vendor (Dosespot, LSQ, Opus RCM)
+- If unclear, default to John for operational support tasks
+
+VENDOR TASK FORMATTING:
+When creating tasks related to vendors, always include vendor name:
+- "Escalate [issue] to Dosespot team"
+- "Follow up with LSQ about [CRM feature]"
+- "Contact Opus RCM regarding [billing issue]"
+
+Priority Guidelines:
+- Critical customer issues: HIGH
+- Bugs affecting multiple customers: HIGH
+- Vendor escalations: MEDIUM-HIGH
+- Process improvements: MEDIUM
+- Documentation updates: LOW-MEDIUM
+- Meeting summary: LOW (always)
+
+TIMESTAMP EXTRACTION:
+- Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
+- Record when key issues or escalations were raised
 
 Return a structured JSON response with all extracted information.
 </instructions>"""

@@ -14,6 +14,11 @@
       "asana_project_id": "1211124207848026",
       "aliases": ["Sales", "Sales Sync", "Sales Team"],
       "description": "Sales Sync meetings - pipeline review and deal strategy"
+    },
+    "Support Leadership and Ops": {
+      "asana_project_id": "1211163265698003",
+      "aliases": ["Support Leadership and Ops", "Support", "Support Ops", "Support Leadership"],
+      "description": "Support, leadership and operations - bug tracking, vendor management, and cross-functional initiatives"
     }
   }
 }
