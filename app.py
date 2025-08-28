@@ -590,7 +590,8 @@ def main():
                         # Convert UploadedFile to bytes
                         pdf_bytes = uploaded_pdf.read()
                         uploaded_pdf.seek(0)  # Reset file pointer
-                        pdf_text = pdf_processor.extract_text(pdf_bytes)
+                        # extract_text returns tuple (text, method_used)
+                        pdf_text, extraction_method = pdf_processor.extract_text(pdf_bytes)
                         
                         if not pdf_text or pdf_text.strip() == "":
                             st.error("Could not extract text from PDF. Please try a different file.")
