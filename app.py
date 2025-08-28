@@ -484,22 +484,94 @@ def main():
     # Quick Task Section
     st.divider()
     st.header("⚡ Quick Task Creation")
-    st.info("Create tasks directly without uploading a transcript")
+    st.info("Create tasks directly without uploading a transcript, or upload an email screenshot for automatic task extraction")
     
-    quick_task_col1, quick_task_col2 = st.columns([2, 1])
+    # Add tabs for different input methods
+    quick_task_tab1, quick_task_tab2 = st.tabs(["📝 Text Input", "📸 Image Upload"])
     
-    with quick_task_col1:
-        quick_task_text = st.text_area(
-            "Describe your task(s)",
-            placeholder="Examples:\n"
-                       "• Send follow-up email to John about pricing tomorrow\n"
-                       "• Schedule demo with Sarah for next Tuesday\n"
-                       "• Review contract and provide feedback by Friday\n\n"
-                       "Tip: Enter multiple tasks on separate lines or separated by semicolons",
-            height=120,
-            help="Enter one or more tasks. The AI will interpret your natural language and create structured tasks.",
-            key="quick_task_input"  # Add key for state management
+    with quick_task_tab1:
+        quick_task_col1, quick_task_col2 = st.columns([2, 1])
+        
+        with quick_task_col1:
+            quick_task_text_input = st.text_area(
+                "Describe your task(s)",
+                placeholder="Examples:\n"
+                           "• Send follow-up email to John about pricing tomorrow\n"
+                           "• Schedule demo with Sarah for next Tuesday\n"
+                           "• Review contract and provide feedback by Friday\n\n"
+                           "Tip: Enter multiple tasks on separate lines or separated by semicolons",
+                height=120,
+                help="Enter one or more tasks. The AI will interpret your natural language and create structured tasks.",
+                key="quick_task_input"  # Add key for state management
+            )
+    
+    with quick_task_tab2:
+        st.write("Upload a screenshot of an email or message to automatically extract tasks")
+        uploaded_image = st.file_uploader(
+            "Choose an image file",
+            type=['png', 'jpg', 'jpeg', 'gif', 'bmp'],
+            help="Upload a screenshot of an email, Slack message, or other communication",
+            key="quick_task_image_upload"
         )
+        
+        quick_task_text_image = ""
+        
+        if uploaded_image is not None:
+            # Display the uploaded image
+            st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+            
+            # Extract text from image button
+            if st.button("🔍 Extract Tasks from Image", type="secondary"):
+                with st.spinner("Analyzing image..."):
+                    try:
+                        analyzer = GeminiAnalyzer()
+                        
+                        # Get the appropriate context based on meeting type
+                        if st.session_state.meeting_type == "existing_customer" and 'selected_customer' in locals():
+                            existing_customer_info = existing_customers.get(selected_customer, {})
+                            customer_context = existing_customer_info.get('context', '')
+                        else:
+                            customer_context = ""
+                        
+                        # Analyze the image
+                        image_analysis = analyzer.analyze_image_for_tasks(
+                            uploaded_image,
+                            selected_customer if 'selected_customer' in locals() else "Unknown Customer",
+                            st.session_state.meeting_type,
+                            customer_context
+                        )
+                        
+                        # Store the extracted text in session state
+                        st.session_state['image_extracted_text'] = image_analysis
+                        st.success("✅ Successfully analyzed image!")
+                        quick_task_text_image = st.text_area(
+                            "Extracted Context and Tasks", 
+                            image_analysis, 
+                            height=200, 
+                            help="Review and edit the extracted tasks if needed"
+                        )
+                    except Exception as e:
+                        st.error(f"Error analyzing image: {str(e)}")
+        
+        # Use extracted text if available
+        if 'image_extracted_text' in st.session_state and not quick_task_text_image:
+            quick_task_text_image = st.session_state.get('image_extracted_text', '')
+            if quick_task_text_image:
+                st.text_area(
+                    "Previously Extracted Tasks", 
+                    quick_task_text_image, 
+                    height=200,
+                    help="These tasks were extracted from your last image upload"
+                )
+    
+    # Determine which text to use based on active tab
+    if 'quick_task_text_image' in locals() and quick_task_text_image:
+        quick_task_text = quick_task_text_image
+    else:
+        quick_task_text = quick_task_text_input if 'quick_task_text_input' in locals() else ""
+    
+    # Create columns for info display
+    quick_task_col1, quick_task_col2 = st.columns([2, 1])
     
     with quick_task_col2:
         st.write("**Current Selection:**")
@@ -508,6 +580,8 @@ def main():
                 st.write(f"📊 Customer: {selected_customer if 'selected_customer' in locals() else 'None'}")
             elif st.session_state.meeting_type == "internal_meeting":
                 st.write(f"🏢 Department: {selected_customer if 'selected_customer' in locals() else 'None'}")
+            elif st.session_state.meeting_type == "existing_customer":
+                st.write(f"🔄 Existing: {selected_customer if 'selected_customer' in locals() else 'None'}")
             else:
                 st.write(f"📁 Project: {selected_customer if 'selected_customer' in locals() else 'None'}")
             

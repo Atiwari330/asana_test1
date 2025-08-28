@@ -1015,6 +1015,126 @@ Return a structured JSON response with all extracted information.
         """
         return self._create_sales_prompt(transcript, customer_name, additional_context)
     
+    def analyze_image_for_tasks(self, 
+                                image_file,
+                                customer_name: str,
+                                meeting_type: str,
+                                customer_context: str = "") -> str:
+        """
+        Analyze an image (email screenshot, etc.) and extract tasks
+        
+        Args:
+            image_file: The uploaded image file from Streamlit
+            customer_name: Name of the customer/project
+            meeting_type: Type of meeting context
+            customer_context: Additional context for existing customers
+            
+        Returns:
+            Extracted tasks and context as a string
+        """
+        import base64
+        from io import BytesIO
+        
+        # Read image data
+        image_bytes = image_file.read()
+        image_file.seek(0)  # Reset file pointer for potential reuse
+        
+        # Encode image to base64
+        base64_image = base64.b64encode(image_bytes).decode('utf-8')
+        
+        # Create prompt for image analysis
+        if meeting_type == "existing_customer" and customer_context:
+            context_prompt = f"""
+This is an email or message screenshot related to an existing customer: {customer_name}
+
+CUSTOMER CONTEXT:
+{customer_context}
+
+ANALYSIS INSTRUCTIONS:
+1. Identify the type of communication (email, Slack, etc.)
+2. Extract the sender's name and role
+3. Identify the main request or issue being raised
+4. Determine what actions need to be taken
+5. Consider who should handle each action based on the customer context
+6. Format as clear, actionable tasks
+
+Remember this is an existing customer in onboarding, so tasks should typically be delegated to:
+- Janelle or Laura for onboarding issues
+- Hector for technical problems
+- John for support issues
+- Adi maintains the relationship but delegates the work
+"""
+        else:
+            context_prompt = f"""
+This is an email or message screenshot related to: {customer_name}
+Meeting Type: {meeting_type}
+
+ANALYSIS INSTRUCTIONS:
+1. Identify the type of communication (email, Slack, etc.)
+2. Extract the sender's name and role
+3. Identify the main request or issue being raised
+4. Determine what actions need to be taken
+5. Format as clear, actionable tasks
+"""
+        
+        prompt = f"""{context_prompt}
+
+Based on the image content, extract and format the following:
+
+1. COMMUNICATION SUMMARY:
+   - Type (Email/Slack/etc.)
+   - From: [Sender name and company]
+   - Subject/Topic: [Main topic]
+   - Urgency: [Low/Medium/High based on content]
+
+2. KEY REQUEST/ISSUE:
+   [Summarize the main ask or problem]
+
+3. ACTIONABLE TASKS:
+   [List each task that needs to be done, one per line]
+   - Be specific and actionable
+   - Include relevant context
+   - Note any deadlines mentioned
+
+4. SUGGESTED DELEGATION:
+   [Based on the context, suggest who should handle each task]
+
+Format the output as natural language tasks that can be directly used for task creation."""
+        
+        try:
+            # Use Gemini's multimodal capability
+            # Combine image and text in the content
+            contents = [
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "inline_data": {
+                                "mime_type": f"image/{image_file.type.split('/')[-1] if hasattr(image_file, 'type') else 'jpeg'}",
+                                "data": base64_image
+                            }
+                        },
+                        {
+                            "text": prompt
+                        }
+                    ]
+                }
+            ]
+            
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=contents
+            )
+            
+            if response and response.text:
+                return response.text
+            else:
+                return "Unable to extract content from the image. Please try again or enter tasks manually."
+                
+        except Exception as e:
+            logger.error(f"Image analysis failed: {e}")
+            raise Exception(f"Failed to analyze image: {str(e)}")
+    
     def interpret_quick_tasks(self, 
                              task_input: str, 
                              context_name: str,
