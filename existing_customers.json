@@ -1,5 +1,11 @@
 {
   "existing_customers": {
+    "True North": {
+      "asana_project_id": "1211174798540700",
+      "aliases": ["True North", "TN"],
+      "context": "CO-DESTINY ACCOUNT - High priority. Location: Alaska. Services: All levels of care (detox, residential, PHP, IOP). Implementation lead: Janelle Hall (all tasks should be delegated to her). Integration requirements: Currently pushing them to use our AI scribe Nabla, but they want Blueprint onboarded instead. HIGH MAINTENANCE - requires high detail, constant updates, and frequent communication. Main customer contacts: Aaron Krauss, Karl S****, Michael Ann Cartwright.",
+      "description": "Co-destiny account in Alaska - All levels of care"
+    },
     "Family Houston": {
       "asana_project_id": "YOUR_ASANA_PROJECT_ID_HERE",
       "aliases": ["Family Houston"],
