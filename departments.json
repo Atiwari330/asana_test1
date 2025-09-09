@@ -18,11 +18,11 @@
       "description": "Sales Sync meetings - pipeline review and deal strategy",
       "context": "SALES DEPARTMENT CONTEXT: Weekly Sales Sync meetings to review pipeline, strategize on deals, and drive revenue growth. Key team: Adi Tiwari (VP Operations/Sales Executive), Chris Garraffa (Account Executive), Nigel Green (Sales Consultant), Gabriel Lacap (Sales Account Engineer), Sean Rickenbacker (Marketing Director). Focus on deal progression, proposal preparation, demo scheduling, competitive positioning, and HubSpot hygiene. Tasks involve following up with prospects, preparing proposals, scheduling demos, and advancing opportunities through the sales cycle."
     },
-    "Support Leadership and Ops": {
+    "Support Leadership": {
       "asana_project_id": "1211163265698003",
-      "aliases": ["Support Leadership and Ops", "Support", "Support Ops", "Support Leadership"],
-      "description": "Support, leadership and operations - bug tracking, vendor management, and cross-functional initiatives",
-      "context": "SUPPORT LEADERSHIP AND OPS CONTEXT: Department managing customer support operations and vendor relationships. Led by John (Support Lead) with oversight from Adi Tiwari (VP Operations). Handles bug tracking, customer escalations, vendor management (Dosespot for e-prescribing, LeadSquared for CRM, Imagine/Opus RCM for billing). Tasks involve resolving customer issues, coordinating with Engineering (Hector) for technical fixes, managing support tickets, vendor escalations, and improving support processes. Focus on maintaining customer satisfaction and operational efficiency."
+      "aliases": ["Support Leadership", "Support", "Customer Support", "Support Team"],
+      "description": "Customer support department - help desk management and customer issue resolution",
+      "context": "SUPPORT LEADERSHIP CONTEXT: Customer Support department at Opus, providing support for our Electronic Health Record (EHR) software. Led by John Catipon (Customer Support Lead). The team uses HubSpot as the help desk platform for ticket management. John manages a team of support specialists who handle customer inquiries, technical issues, and user training. Most tasks are delegated to John unless specifically noted otherwise. Key responsibilities include: resolving EHR software issues, managing support tickets in HubSpot, coordinating with Engineering (Hector) for bug fixes, creating support documentation, conducting user training, and ensuring customer satisfaction. The department focuses on timely resolution of customer issues and maintaining high-quality support standards for our behavioral health EHR platform."
     }
   }
 }

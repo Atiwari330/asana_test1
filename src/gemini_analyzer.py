@@ -795,7 +795,7 @@ Return a structured JSON response with all extracted information.
     
     def _create_support_prompt(self, transcript: str, additional_context: str) -> str:
         """
-        Create the prompt for Support Leadership and Ops department meetings
+        Create the prompt for Support Leadership department meetings
         
         Args:
             transcript: The transcript text
@@ -805,10 +805,10 @@ Return a structured JSON response with all extracted information.
             Formatted prompt string for support meetings
         """
         prompt = f"""<context>
-You are analyzing a Support Leadership and Ops meeting transcript from Opus.
+You are analyzing a Support Leadership meeting transcript from Opus.
 
 MEETING PURPOSE:
-This is a support, leadership, and operations meeting focusing on:
+This is a customer support leadership meeting focusing on:
 - Bug tracking and resolution
 - Vendor/partner management and escalations
 - Cross-functional initiatives
@@ -817,8 +817,8 @@ This is a support, leadership, and operations meeting focusing on:
 - Customer issue resolution strategies
 
 KEY TEAM MEMBERS AND THEIR ROLES:
-- John: Support Lead, internal employee responsible for day-to-day support operations
-- Adi Tiwari: VP of Operations, oversees Support Leadership and Ops department
+- John Catipon: Customer Support Lead, responsible for day-to-day support operations
+- Adi Tiwari: VP of Operations, provides oversight for Support Leadership department
 - Hector Fraginals: Chief Technology Officer (CTO), handles engineering escalations
 - Janelle: Lead Onboarding Director, handles onboarding-related support issues
 
@@ -850,7 +850,7 @@ When these vendors are mentioned, use the following context:
 </transcript>
 
 <instructions>
-Analyze this Support Leadership and Ops meeting transcript and extract:
+Analyze this Support Leadership meeting transcript and extract:
 1. Action items - specific tasks with clear ownership
 2. A brief summary of the meeting
 3. List of participants
@@ -886,12 +886,12 @@ For additional action items, focus on:
 - Cross-team coordination tasks
 
 OWNERSHIP RULES:
-- Support tasks → Usually John (Support Lead)
+- Support tasks → Usually John Catipon (Customer Support Lead)
 - Operations/strategic tasks → Adi (VP of Ops)
 - Engineering/technical escalations → Hector (CTO)
 - Onboarding-related support → Janelle
 - Vendor escalations → Specify the vendor (Dosespot, LSQ, Opus RCM)
-- If unclear, default to John for operational support tasks
+- If unclear, default to John Catipon for operational support tasks
 
 IMPORTANT:
 - Do NOT use the is_question flag - that's only for sales calls with external customers
