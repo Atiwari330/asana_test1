@@ -5,6 +5,18 @@
       "aliases": ["True North", "TN"],
       "context": "CO-DESTINY ACCOUNT - High priority. Location: Alaska. Services: All levels of care (detox, residential, PHP, IOP). Implementation lead: Janelle Hall (all tasks should be delegated to her). Integration requirements: Currently pushing them to use our AI scribe Nabla, but they want Blueprint onboarded instead. HIGH MAINTENANCE - requires high detail, constant updates, and frequent communication. Main customer contacts: Aaron Krauss, Karl S****, Michael Ann Cartwright.",
       "description": "Co-destiny account in Alaska - All levels of care"
+    },
+    "Adult and Teen Challenge PAC West": {
+      "asana_project_id": "1211177146915825",
+      "aliases": ["Adult and Teen Challenge PAC West", "ATCPW", "PAC West"],
+      "context": "CO-DESTINY ACCOUNT. Currently in the process of migrating from Practice Suite (outdated revenue cycle management platform connected to Opus EHR) to the native Opus RCM platform. This migration is a key priority for this account.",
+      "description": "Co-destiny account - Currently migrating from Practice Suite to Opus RCM"
+    },
+    "US-2": {
+      "asana_project_id": "1211212543907162",
+      "aliases": ["US-2", "US2"],
+      "context": "AT RISK ACCOUNT - High churn risk. This customer requires immediate attention and proactive support to prevent churn. Action plan project created to coordinate retention efforts. All escalations should be prioritized and handled with urgency.",
+      "description": "At-risk account requiring urgent retention efforts"
     }
   }
 }

@@ -213,11 +213,19 @@ class GeminiAnalyzer:
         Args:
             transcript: The transcript text
             customer_name: Customer/project name
-            additional_context: Additional context
+            additional_context: Additional context including customer-specific information
             
         Returns:
             Formatted prompt string for sales calls
         """
+        # Build customer context section if provided
+        customer_context_section = ""
+        if additional_context and additional_context.strip():
+            customer_context_section = f"""
+Customer-Specific Context:
+{additional_context}
+"""
+        
         prompt = f"""<context>
 You are analyzing a sales call transcript for {customer_name}, a prospect/customer of Opus.
 
@@ -236,8 +244,7 @@ Typical attendees from prospects:
 - Front desk staff
 - Admins
 - Owners/Operators
-
-{additional_context if additional_context else ""}
+{customer_context_section}
 </context>
 
 <transcript>

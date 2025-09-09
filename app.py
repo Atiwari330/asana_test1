@@ -306,15 +306,15 @@ def main():
                         # Read file content
                         file_content = uploaded_file.read()
                         
-                        # Extract text
-                        processor = PDFProcessor()
-                        is_valid, error_msg = processor.validate_file(file_content, uploaded_file.name)
+                        # Create PDFProcessor instance
+                        pdf_processor = PDFProcessor()
+                        is_valid, error_msg = pdf_processor.validate_file(file_content, uploaded_file.name)
                         
                         if not is_valid:
                             st.error(f"Invalid file: {error_msg}")
                             st.session_state.processing_status = 'error'
                         else:
-                            extracted_text, method = processor.extract_text(file_content)
+                            extracted_text, method = pdf_processor.extract_text(file_content)
                             
                             if extracted_text:
                                 st.session_state.extracted_text = extracted_text
@@ -328,6 +328,9 @@ def main():
                                 st.session_state.processing_status = 'error'
                     
                     except Exception as e:
+                        import traceback
+                        error_details = traceback.format_exc()
+                        logger.error(f"PDF processing error: {error_details}")
                         st.error(f"Error processing PDF: {str(e)}")
                         st.session_state.processing_status = 'error'
     
@@ -343,7 +346,7 @@ def main():
                         
                         # Analyze transcript
                         analyzer = GeminiAnalyzer()
-                        # Pass department for internal meetings, project for project meetings, context for existing customers
+                        # Pass department for internal meetings, project for project meetings, context for existing customers and sales calls
                         if st.session_state.meeting_type == "internal_meeting":
                             department = selected_customer
                             project = ""
@@ -358,6 +361,12 @@ def main():
                             # Get customer-specific context from existing_customers.json
                             existing_customer_info = existing_customers.get(selected_customer, {})
                             additional_context = existing_customer_info.get('context', '')
+                        elif st.session_state.meeting_type == "sales_call":
+                            department = ""
+                            project = ""
+                            # Get customer-specific context from customers.json for sales calls
+                            customer_info = customers.get(selected_customer, {})
+                            additional_context = customer_info.get('context', '')
                         else:
                             department = ""
                             project = ""
@@ -585,7 +594,6 @@ def main():
                 with st.spinner("Processing PDF and analyzing conversation..."):
                     try:
                         # First extract text from PDF
-                        from src.pdf_processor import PDFProcessor
                         pdf_processor = PDFProcessor()
                         # Convert UploadedFile to bytes
                         pdf_bytes = uploaded_pdf.read()

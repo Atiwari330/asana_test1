@@ -3,92 +3,122 @@
     "Family Houston": {
       "asana_project_id": "1211106489570613",
       "aliases": ["Family Houston"],
-      "description": "Behavioral health recovery center"
+      "description": "Behavioral health recovery center",
+      "context": ""
     },
     "Ulster County": {
       "asana_project_id": "1211114338222470",
       "aliases": ["Ulster County Services", "Ulster"],
-      "description": "County mental health services"
+      "description": "County mental health services",
+      "context": ""
     },
     "Triumphant Homes": {
       "asana_project_id": "1211114458655264",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "I am Recovery": {
       "asana_project_id": "1211114458655267",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Center for Occupational Health": {
       "asana_project_id": "1211114458655270",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Wil La Mootk": {
       "asana_project_id": "1211114458655273",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Serenity Psychotherapy": {
       "asana_project_id": "1211114458655276",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "NeuPath Mind Wellness": {
       "asana_project_id": "1211114462739014",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Shiloh Treatment Center": {
       "asana_project_id": "1211114462739017",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Fathers UpLift": {
       "asana_project_id": "1211114462739020",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Professional Counseling Center": {
       "asana_project_id": "1211114462739023",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Life Within": {
       "asana_project_id": "1211114462739026",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Talkspace": {
       "asana_project_id": "1211114462739029",
       "aliases": ["Example Corp", "EC"],
-      "description": "Example customer for testing"
+      "description": "Example customer for testing",
+      "context": ""
     },
     "Sanctuary Clinics": {
       "asana_project_id": "1211106535372083",
       "aliases": ["Sanctuary Clinics"],
-      "description": "Behavioral health services"
+      "description": "Behavioral health services",
+      "context": ""
     },
     "Apex Transitional Housing": {
       "asana_project_id": "1211116494194836",
       "aliases": ["Apex Transitional Housing", "Apex"],
-      "description": "Transitional housing services"
+      "description": "Transitional housing services",
+      "context": ""
     },
     "Teen Challenge Canada": {
       "asana_project_id": "1211140845162340",
       "aliases": ["Teen Challenge Canada", "Teen Challenge", "TCC"],
-      "description": "Faith-based addiction recovery program in Canada"
+      "description": "Faith-based addiction recovery program in Canada",
+      "context": ""
     },
     "Salvation Army CA": {
       "asana_project_id": "1211152480708223",
       "aliases": ["Salvation Army CA", "Salvation Army Canada", "Salvation Army"],
-      "description": "Salvation Army operations in Canada"
+      "description": "Salvation Army operations in Canada",
+      "context": ""
     },
     "We Fix Brains": {
       "asana_project_id": "1211154624487194",
       "aliases": ["We Fix Brains", "WFB"],
-      "description": "Behavioral health and brain wellness services"
+      "description": "Behavioral health and brain wellness services",
+      "context": ""
+    },
+    "Adult and Teen Challenge Canada": {
+      "asana_project_id": "1211174798540705",
+      "aliases": ["Adult and Teen Challenge Canada", "ATCC"],
+      "description": "Faith-based addiction recovery program in Canada",
+      "context": ""
+    },
+    "Wellmore Prospecting": {
+      "asana_project_id": "1211223917430630",
+      "aliases": ["Wellmore", "Wellmore Prospecting"],
+      "description": "Prospective client - behavioral health services",
+      "context": "PROSPECTING ACCOUNT - Large Connecticut-based behavioral health organization offering multiple services and levels of care. Currently on Kipu/Avatar. KEY REQUIREMENTS: HIE integration needed, significant custom modifications and feature enhancements required (many beneficial for core product). CUSTOMER CONTACTS: Arina (executive/chief level), Becky/Rebecca (principal contact, comprehensive knowledge), Ariel (clinical lead), Retta (operations). OPUS TEAM: Adi Tiwari (principal sales), Humberto (CEO actively involved), Ben from Imagine (actively involved). HIGH VALUE DEAL requiring significant customization but strategic for product development."
     }
   }
 }
