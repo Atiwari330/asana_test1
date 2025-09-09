@@ -380,6 +380,12 @@ Meeting context:
 - Attendees are Opus team members
 - Adi Tiwari is VP of Operations, handles support, marketing, and cross-functional operations
 
+KEY DEPARTMENT HEADS FOR TASK DELEGATION:
+- Marketing: Sean Rickenbacker (Marketing Director)
+- Engineering/Development: Hector Fraginals (CTO)
+- Onboarding/Training: Janelle Hall (Lead Onboarding Director)
+- Support: John (Support Lead)
+
 {additional_context if additional_context else ""}
 </context>
 
@@ -428,6 +434,8 @@ IMPORTANT:
 - Most tasks are for team organization and will be assigned later in Asana
 - Include enough context for proper task assignment later
 - Focus on WHO needs to do WHAT by WHEN (if mentioned)
+- Do NOT use the is_question flag - that's only for sales calls with external customers
+- Internal meetings generate action items for department heads, NOT customer questions
 
 Prioritize based on:
 - High: Critical operational issues, customer-impacting items, urgent deadlines
@@ -647,6 +655,11 @@ Priority Guidelines:
 - Marketing campaigns: MEDIUM
 - HubSpot hygiene: MEDIUM
 - Process improvements: LOW
+
+IMPORTANT:
+- Do NOT use the is_question flag - that's only for sales calls with external customers
+- Sales Sync meetings generate internal action items for the sales team, NOT customer questions
+- This is an internal team meeting, not a customer-facing call
 
 Return a structured JSON response with all extracted information.
 </instructions>"""
@@ -879,6 +892,10 @@ OWNERSHIP RULES:
 - Onboarding-related support → Janelle
 - Vendor escalations → Specify the vendor (Dosespot, LSQ, Opus RCM)
 - If unclear, default to John for operational support tasks
+
+IMPORTANT:
+- Do NOT use the is_question flag - that's only for sales calls with external customers
+- Support meetings generate action items and escalations, NOT customer questions
 
 VENDOR TASK FORMATTING:
 When creating tasks related to vendors, always include vendor name:
