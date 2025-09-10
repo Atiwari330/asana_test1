@@ -119,6 +119,12 @@
       "aliases": ["Wellmore", "Wellmore Prospecting"],
       "description": "Prospective client - behavioral health services",
       "context": "PROSPECTING ACCOUNT - Large Connecticut-based behavioral health organization offering multiple services and levels of care. Currently on Kipu/Avatar. KEY REQUIREMENTS: HIE integration needed, significant custom modifications and feature enhancements required (many beneficial for core product). CUSTOMER CONTACTS: Arina (executive/chief level), Becky/Rebecca (principal contact, comprehensive knowledge), Ariel (clinical lead), Retta (operations). OPUS TEAM: Adi Tiwari (principal sales), Humberto (CEO actively involved), Ben from Imagine (actively involved). HIGH VALUE DEAL requiring significant customization but strategic for product development."
+    },
+    "Oar Wellness": {
+      "asana_project_id": "1211320559392440",
+      "aliases": ["Oar Wellness", "Oar"],
+      "description": "Canadian residential behavioral health program",
+      "context": "CANADIAN PROSPECT - Residential-only behavioral health program located approximately one hour north of Toronto, Canada. PROGRAM TYPE: Exclusively residential treatment facility (no outpatient services). MAIN CONTACT: Sarah Richardson. LOCATION CONSIDERATIONS: Being in Canada may require compliance with Canadian healthcare regulations and privacy laws (PIPEDA). Integration requirements may differ from US-based facilities."
     }
   }
 }
