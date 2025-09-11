@@ -356,7 +356,9 @@ def main():
                         elif st.session_state.meeting_type == "project_meeting":
                             department = ""
                             project = selected_customer
-                            additional_context = ""
+                            # Get project-specific context from projects.json
+                            project_info = projects.get(selected_customer, {})
+                            additional_context = project_info.get('context', '')
                         elif st.session_state.meeting_type == "existing_customer":
                             department = ""
                             project = ""

@@ -125,6 +125,12 @@
       "aliases": ["Oar Wellness", "Oar"],
       "description": "Canadian residential behavioral health program",
       "context": "CANADIAN PROSPECT - Residential-only behavioral health program located approximately one hour north of Toronto, Canada. PROGRAM TYPE: Exclusively residential treatment facility (no outpatient services). MAIN CONTACT: Sarah Richardson. LOCATION CONSIDERATIONS: Being in Canada may require compliance with Canadian healthcare regulations and privacy laws (PIPEDA). Integration requirements may differ from US-based facilities."
+    },
+    "Alpine Springs": {
+      "asana_project_id": "1211333670857252",
+      "aliases": ["Alpine Springs"],
+      "description": "Behavioral health prospect in Pennsylvania",
+      "context": "SALES PROSPECT - Located in Pennsylvania. MAIN CONTACTS: Doug and Lana. Currently in prospecting/discovery phase."
     }
   }
 }

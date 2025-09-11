@@ -90,10 +90,10 @@ class GeminiAnalyzer:
         elif meeting_type == "project_meeting":
             # Check for project-specific prompts
             if "finpay" in project.lower() or "lsq" in project.lower():
-                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)
+                prompt = self._create_project_meeting_prompt(transcript, additional_context)
             else:
                 # Create a generic project prompt if needed in the future
-                prompt = self._create_finpay_lsq_prompt(transcript, additional_context)  # Default to Finpay for now
+                prompt = self._create_project_meeting_prompt(transcript, additional_context)  # Default to Finpay for now
         elif meeting_type == "existing_customer":
             # Use existing customer escalation prompt
             prompt = self._create_existing_customer_prompt(transcript, customer_name, additional_context)
@@ -666,54 +666,22 @@ Return a structured JSON response with all extracted information.
         
         return prompt
     
-    def _create_finpay_lsq_prompt(self, transcript: str, additional_context: str) -> str:
+    def _create_project_meeting_prompt(self, transcript: str, additional_context: str) -> str:
         """
-        Create the prompt for Finpay <> LSQ Integration project meetings
+        Create the prompt for project meetings
         
         Args:
             transcript: The transcript text
-            additional_context: Additional context
+            additional_context: Additional context from projects.json
             
         Returns:
-            Formatted prompt string for Finpay LSQ integration meetings
+            Formatted prompt string for project meetings
         """
         prompt = f"""<context>
-You are analyzing a meeting transcript for the Finpay <> LSQ Integration project.
+You are analyzing a meeting transcript for a project meeting.
 
 PROJECT CONTEXT:
-This is a critical integration project between two companies:
-- Finpay: Third-party behavioral health company specializing in estimations and financial services
-- LSQ (Lead Squared): CRM platform that Opus white-labels as "Opus CRM"
-
-PROJECT GOAL: Integrate Finpay's services with Lead Squared (Opus CRM) to enable seamless data flow and functionality between the two platforms.
-
-KEY STAKEHOLDERS AND THEIR ROLES:
-
-OPUS TEAM:
-- Hector Fraginals - Chief Technology Officer (CTO) at Opus
-  - Technical decision maker, oversees integration architecture
-  - Name variations: May appear as "Hector", "CTO"
-- Adi Tiwari - VP of Operations at Opus
-  - Project coordination, operational requirements
-  - Name variations: May appear as "Adi", "VP Ops"
-
-FINPAY TEAM:
-- Linda Stewart - VP of Operations at Finpay
-  - Finpay's operational lead for integration
-  - Name variations: May appear as "Linda", "VP"
-- Lauren - Finpay team member
-  - Integration support and coordination
-- Rob - Finpay team member
-  - Technical or operational support
-
-ABOUT THE COMPANIES:
-- Opus: EHR (Electronic Health Record) company for behavioral health
-  - White-labels Lead Squared as "Opus CRM"
-  - Integration needs to work within Opus ecosystem
-- Finpay: Provides estimation and financial services for behavioral health
-- Lead Squared (LSQ): The underlying CRM platform
-
-{additional_context if additional_context else ""}
+{additional_context if additional_context else "This is a project meeting. Extract action items and key decisions based on the discussion."}
 </context>
 
 <transcript>
@@ -721,70 +689,62 @@ ABOUT THE COMPANIES:
 </transcript>
 
 <instructions>
-Analyze this Finpay <> LSQ Integration meeting transcript and extract:
+Analyze this project meeting transcript and extract:
 1. Action items - specific tasks related to the integration project
 2. A brief summary of the meeting
 3. List of participants (identify company affiliation when possible)
 4. Key technical or business decisions made
-5. Meeting title - Create a concise descriptive title (10-30 chars) focused on integration progress
+5. Meeting title - Create a concise descriptive title (10-30 chars) focused on the meeting topic
 
 MANDATORY TASK - ALWAYS INCLUDE AS FIRST ACTION ITEM:
 1. SUMMARY OF CALL:
    - Title: "SUMMARY OF CALL"
    - Priority: low
-   - Description: Comprehensive integration meeting summary including:
-     * Meeting purpose (technical review, API discussion, timeline sync, testing session, etc.)
-     * Current integration status and progress since last meeting
-     * Technical topics discussed (APIs, data mapping, authentication, etc.)
-     * Business requirements clarified or modified
-     * Decisions made by Hector (CTO) or technical leads
-     * Operational considerations raised by Adi (VP Ops) or Linda (Finpay VP)
-     * Blockers or dependencies identified between teams
-     * Testing results or plans discussed
-     * Security or compliance topics addressed
-     * Timeline updates or commitments made
-     * Resource needs from either Opus or Finpay side
-     * Next technical milestones
-     * Overall integration health and risk assessment
+   - Description: Comprehensive meeting summary including:
+     * Meeting purpose and main topics discussed
+     * Current status and progress updates
+     * Key decisions made
+     * Action items and next steps
+     * Blockers or dependencies identified
+     * Timeline updates or commitments
+     * Resource needs or requirements
+     * Overall project status
    - This is NOT an action item - it's project documentation for reference
    - Provide technical and business context for both teams
 
 CRITICAL EXTRACTION RULES:
-1. Technical decisions from Hector (CTO) are HIGH priority
-2. Integration requirements from either side are HIGH priority
+1. Deliverables and commitments are HIGH priority
+2. Blockers and critical issues are HIGH priority
 3. Timeline commitments are HIGH priority
-4. Testing and validation tasks are MEDIUM-HIGH priority
+4. Process improvements are MEDIUM priority
 5. Documentation tasks are MEDIUM priority
 
 For action items, focus on:
-- Integration requirements and specifications
-- API endpoints or data mapping needs
-- Testing procedures and timelines
-- Blockers or dependencies between teams
-- Security or compliance requirements
+- Specific tasks and deliverables mentioned
+- Decisions that require follow-up
+- Blockers or dependencies
 - Timeline commitments
-- Follow-up meetings or demos needed
+- Follow-up meetings or actions needed
 
 OWNERSHIP ATTRIBUTION:
-- Tasks for Opus team: Usually technical integration on Opus/LSQ side
-- Tasks for Finpay team: Usually related to their API/data requirements
-- Joint tasks: Testing, validation, documentation
-- Unless specified, technical tasks likely belong to the technical team mentioned
+- Assign tasks to the person who committed to them
+- If unclear, assign to the most relevant person based on context
+- Use job titles and roles mentioned in the meeting
 
 TIMESTAMP EXTRACTION:
 - Look for timestamps in the transcript (format: MM:SS or HH:MM:SS)
 - Record when key decisions or commitments were made
 
-INTEGRATION QUESTIONS:
-- For questions needing clarification, format title as: "Integration Question: [specific question]"
-- These are NOT customer questions - they are technical/business clarifications between partners
+PROJECT QUESTIONS:
+- For questions needing clarification, format title as: "Question: [specific question]"
+- These are clarification items that need follow-up
 - Include full context in the description
 - DO NOT mark these with is_question flag (that's only for sales calls)
 
 Priority Guidelines:
-- Blockers to integration: HIGH
-- Technical implementation tasks: HIGH
-- Testing and validation: MEDIUM-HIGH
+- Critical blockers: HIGH
+- Deliverables with deadlines: HIGH
+- Process improvements: MEDIUM
 - Documentation: MEDIUM
 - Future enhancements: LOW
 

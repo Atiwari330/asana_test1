@@ -3,7 +3,14 @@
     "Finpay <> LSQ Integration": {
       "asana_project_id": "1211116894172769",
       "aliases": ["Finpay LSQ", "LSQ Integration", "Finpay Integration"],
-      "description": "Finpay and LSQ integration project - Third-party behavioral health estimation services integration with Lead Squared CRM"
+      "description": "Finpay and LSQ integration project - Third-party behavioral health estimation services integration with Lead Squared CRM",
+      "context": "INTEGRATION PROJECT CONTEXT:\nThis is a critical integration project between Finpay (third-party behavioral health estimation services) and Lead Squared (Opus CRM).\n\nKEY STAKEHOLDERS:\nOpus Team:\n- Hector Fraginals (CTO) - Technical decision maker\n- Adi Tiwari (VP Operations) - Project coordination\n\nFinpay Team:\n- Linda Stewart (VP Operations) - Finpay's operational lead\n- Lauren - Integration support\n- Rob - Technical support\n\nFOCUS AREAS:\n- API integration and data mapping\n- Testing and validation\n- Security and compliance\n- Timeline management\n\nPRIORITY GUIDELINES:\n- Technical blockers: HIGH\n- Integration requirements: HIGH\n- Testing tasks: MEDIUM-HIGH\n- Documentation: MEDIUM"
+    },
+    "Opus <> LSQ Sales": {
+      "asana_project_id": "1211331701678220",
+      "aliases": ["LSQ CRM", "Opus CRM", "Lead Squared Sales", "CRM Weekly", "LSQ Sales"],
+      "description": "Weekly CRM team meetings with Lead Squared for sales operations",
+      "context": "WEEKLY CRM SYNC MEETING\n\nMEETING PURPOSE: Weekly sync between Opus and Lead Squared (CRM provider) to review sales operations, deal updates, and action items.\n\nKEY PARTICIPANTS:\nLead Squared Team:\n- Nikhil Parwal - Main point of contact\n- Megan - Support team member\n- Isha - Support team member\n\nOpus Team:\n- Adi Tiwari - VP Revenue Operations & Account Executive\n- Humberto - CEO & Sales Rep\n- Chris Garafa - Account Executive\n- Janelle Hall - Implementation Director\n- Gabriel - Executive Assistant to Adi\n\nFOCUS AREAS:\n- Sales tasks and objectives for specific clients\n- Deal updates and pipeline management\n- Follow-up action items for sales executives\n- CRM configuration and optimization\n- Integration between sales and implementation teams\n- Client-specific requirements and customizations\n\nPRIORITY GUIDELINES:\n- Client deliverables and follow-ups: HIGH\n- Deal updates and sales tasks: HIGH\n- CRM configuration changes: MEDIUM\n- Training or documentation: LOW\n\nTASK OWNERSHIP:\n- Sales-related tasks: Assign to specific AE mentioned or Adi/Humberto/Chris\n- Implementation items: Assign to Janelle\n- CRM technical items: Note for Lead Squared team (Nikhil/Megan/Isha)\n- Administrative items: Assign to Gabriel"
     }
   }
 }
