@@ -23,6 +23,12 @@
       "aliases": ["Support Leadership", "Support", "Customer Support", "Support Team"],
       "description": "Customer support department - help desk management and customer issue resolution",
       "context": "SUPPORT LEADERSHIP CONTEXT: Customer Support department at Opus, providing support for our Electronic Health Record (EHR) software. Led by John Catipon (Customer Support Lead). The team uses HubSpot as the help desk platform for ticket management. John manages a team of support specialists who handle customer inquiries, technical issues, and user training. Most tasks are delegated to John unless specifically noted otherwise. Key responsibilities include: resolving EHR software issues, managing support tickets in HubSpot, coordinating with Engineering (Hector) for bug fixes, creating support documentation, conducting user training, and ensuring customer satisfaction. The department focuses on timely resolution of customer issues and maintaining high-quality support standards for our behavioral health EHR platform."
+    },
+    "Adi Rev Ops": {
+      "asana_project_id": "1211317165447198",
+      "aliases": ["Adi Rev Ops", "Adi RevOps", "Adi's Tasks"],
+      "description": "Adi's personal Revenue Operations tasks and initiatives",
+      "context": "ADI'S PERSONAL REV OPS CONTEXT: This is Adi Tiwari's personal workspace for Revenue Operations initiatives and to-do items. As VP of Revenue Operations, this space tracks personal action items, strategic initiatives, and operational tasks that Adi needs to complete. This includes revenue strategy planning, sales operations improvements, cross-functional projects, personal follow-ups from various meetings, and initiatives to optimize revenue generation across the organization. All tasks here are specifically for Adi to complete or delegate as needed."
     }
   }
 }
