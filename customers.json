@@ -131,6 +131,12 @@
       "aliases": ["Alpine Springs"],
       "description": "Behavioral health prospect in Pennsylvania",
       "context": "SALES PROSPECT - Located in Pennsylvania. MAIN CONTACTS: Doug and Lana. Currently in prospecting/discovery phase."
+    },
+    "Sheridan House": {
+      "asana_project_id": "1211346651483381",
+      "aliases": ["Sheridan House", "Sheridan"],
+      "description": "Nonprofit behavioral health organization in Florida",
+      "context": "FLORIDA NONPROFIT - Located in Davey, FL (near Fort Lauderdale/Miami area). Three-program organization: 1) Single moms program (not relevant for EHR), 2) Counseling center (7 counselors, currently all self-pay), 3) Residential program for teen boys (main focus - faith-based behavioral modification for at-risk youth, weekday residential/weekend home, ~27 boys). MAIN CONTACTS: Andrea Lowe (admin, handles insurance/billing), B Van (clinic and residential director). CURRENT SYSTEMS: Using Best Notes (dissatisfied - not user-friendly), external billing company ($150/month, recent turnover issues), implementing Apricot CRM for client management. INSURANCE STATUS: Currently out-of-network with most commercial payers, accepting limited insurance. NEEDS: Looking to expand insurance billing capabilities (especially Medicaid), reduce manual processes, better system integration, and make services more affordable for families. SERVICES: Bills for IOP and OP levels of care. OPPORTUNITY: Strong interest in RCM services and credentialing assistance to capture more revenue."
     }
   }
 }
